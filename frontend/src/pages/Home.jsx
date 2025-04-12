@@ -9,15 +9,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-900 flex flex-col md:p-2">
+    <div className="min-h-screen w-full bg-gray-300 flex flex-col md:p-2">
 
       {/* Container for image and text side by side */}
       <div className="flex flex-col md:flex-row justify-between w-full mb-6 gap-8">
         
         {/* Text on the left */}
         <div className="text-start w-full p-2 ">
-          <h1 className="text-3xl md:text-5xl font-bold text-white">Events deserve to be remembered...</h1>
-          <p className="text-white mt-2 text-lg md:text-2xl">
+          <h1 className="text-2xl md:text-3xl font-bold text-black">Events deserve to be remembered...</h1>
+          <p className="text-black mt-2 text-lg md:text-2xl">
             Your memories deserve to be preserved! <br /> 
             Whether it's a special event, a celebration, <br />  
             or a simple moment worth remembering, <br /> 
@@ -63,8 +63,8 @@ export default function Home() {
         </div>
 
         {/* Text on right (mobile: bottom) */}
-        <div className="w-full md:w-1/2 p-4 md:p-8 text-center md:text-end">
-          <p className="text-white text-lg md:text-2xl">
+       <div className="w-full md:w-1/2 p-4 md:p-8 text-center md:text-end">
+          <p className="text-black text-lg md:text-2xl">
             Every moment tells a story, <br />
             save your story forever! From <br />
             big celebrations to small <br />
