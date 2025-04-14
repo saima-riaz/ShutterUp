@@ -16,3 +16,9 @@ build/
 
 # Mac system files
 .DS_Store
+
+# Ignore large media files (Add folders you don't want to push)
+videos/
+*.mp4
+*.mov
+*.avi
