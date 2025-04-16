@@ -36,6 +36,8 @@ const Signup = () => {
     }
   };
 
+  {/* Frontend part */}
+
   return (
     <div className="flex justify-center items-center min-h-screen -mt-16">
       <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
@@ -117,7 +119,8 @@ const Signup = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-gray-800 transition"
+            className="w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-yellow-800 transition 
+            active:scale-95 active:bg-gray-900"
           >
             Sign up
           </button>
