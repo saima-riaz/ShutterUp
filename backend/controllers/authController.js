@@ -104,10 +104,10 @@ exports.verifyEmail = async (req, res) => {
     user.verificationTokenExpires = undefined;
     await user.save();
 
-    res.status(200).sned("Email verified successfully!");
+    res.status(200).json({ message: "Email verified successfully!" });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
