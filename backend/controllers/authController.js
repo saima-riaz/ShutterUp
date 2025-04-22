@@ -60,14 +60,10 @@ exports.register = async (req, res) => {
   
     };
 
-    // Try sending email for verif
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log("Email sent successfully!");
-    } catch (err) {
-      console.error("Email failed:", err);
-      throw err; // Handle in your route
-    }
+    // Send the verification email notic on terminal 
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully!");
+
 
     // Generate JWT token (optional: you might want to wait until email is verified)
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -90,6 +86,7 @@ exports.verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
 
+    // Find the user by verification token and check if the token has expired
     const user = await User.findOne({
       verificationToken: token,
       verificationTokenExpires: { $gt: Date.now() }
@@ -99,6 +96,7 @@ exports.verifyEmail = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
+    // Mark user as verified
     user.isVerified = true;
     user.verificationToken = undefined;
     user.verificationTokenExpires = undefined;
@@ -111,7 +109,7 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-// Update login to check if email is verified
+// login the user
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -146,3 +144,5 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+
