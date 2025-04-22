@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       
       fontFamily: {
-        sans: ['MuseoModerno', 'sans-serif'],
+        sans: ['Satisfy", cursive', 'sans-serif'],
         lavish: ['"Lavishly Yours"', 'cursive'],
       },
       

@@ -32,8 +32,9 @@ const Login = () => {
       } else {
         // Store token and redirect on successful login
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         setMessage("Login successful! Redirecting...");
-        setTimeout(() => navigate("/"), 1500);
+        setTimeout(() => navigate("/dashboard"), 1500);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -43,7 +44,6 @@ const Login = () => {
     }
   };
 
-   {/* Frontend part */}
 
   return (
     <div className="flex justify-center items-center min-h-screen -mt-16">
@@ -74,7 +74,6 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
-              placeholder="you@example.com"
               required
             />
           </div>
@@ -87,9 +86,8 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
-              placeholder="••••••••"
-              required
-            />
+  
+              required/>
           </div>
 
           {/* Show password and forgot link */}
@@ -102,9 +100,7 @@ const Login = () => {
               />
               <span>Show password</span>
             </label>
-            <Link to="/forgot-password" className="text-blue-600 hover:underline">
-              Forgot password?
-            </Link>
+            
           </div>
 
           {/* Login button */}
