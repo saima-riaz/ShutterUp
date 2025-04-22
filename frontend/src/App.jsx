@@ -4,17 +4,23 @@ import Home from './pages/Home';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './dashboard/Dashboard';
+import ProtectedRoute from './util/ProtectedRoute';
+import { AuthProvider } from './util/AuthContext';
 
 function App() {
   return (
-    <Router>
-      <Routes> 
-        <Route path="/" element={<><Navbar /><Home /></>} />
-        <Route path="/signup" element={<><Navbar /><Signup /></>} />
-        <Route path="/login" element={<><Navbar /><Login /></>} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes> 
+          <Route path="/" element={<><Navbar /><Home /></>} />
+          <Route path="/signup" element={<><Navbar /><Signup /></>} />
+          <Route path="/login" element={<><Navbar /><Login /></>} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
