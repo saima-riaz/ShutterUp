@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../util/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
@@ -10,6 +11,8 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,14 +30,15 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        setMessage(data.message || "Login failed.");
-      } else {
-        // Store token and redirect on successful login
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+      if (response.ok) {
+        const { token, user } = data;
+        login(token, user);
         setMessage("Login successful! Redirecting...");
-        setTimeout(() => navigate("/dashboard"), 1500);
+        
+        const from = location.state?.from?.pathname || "/dashboard";
+        setTimeout(() => navigate(from, { replace: true }), 1500);
+      } else {
+        setMessage(data.message || "Invalid credentials.");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -43,7 +47,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="flex justify-center items-center min-h-screen -mt-16">
@@ -65,12 +68,14 @@ const Login = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} autoComplete="on">
           {/* Email input */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
             <input
               type="email"
+              name="email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
@@ -83,11 +88,13 @@ const Login = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
-  
-              required/>
+              required
+            />
           </div>
 
           {/* Show password and forgot link */}
@@ -100,7 +107,6 @@ const Login = () => {
               />
               <span>Show password</span>
             </label>
-            
           </div>
 
           {/* Login button */}
