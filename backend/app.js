@@ -2,14 +2,20 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const fileUpload = require('express-fileupload');
+const cloudinary = require('./config/cloudinary');
 
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(express.json()); // Parse JSON requests
+app.use(express.json());
 app.use(cors()); // Allow frontend requests
+app.use(fileUpload({
+  useTempFiles: false,
+  limits: { fileSize: 10 * 1024 * 1024 } // size 10MB limit
+}));
 
 // Database connection
 mongoose

@@ -1,13 +1,15 @@
 const Post = require("../models/Post");
+const uploadToCloudinary = require("../utils/Upload");
 
 // Create a new post
 exports.createPost = async (req, res) => {
   try {
     const { caption } = req.body;
 
-    if (!req.file) {
+    if (!req.file?.image) {
       return res.status(400).json({ message: "No image file uploaded" });
     }
+
 
     if (!req.user || !req.user.id) {
       return res.status(401).json({ message: "Unauthorized: No user found" });
@@ -35,14 +37,7 @@ exports.getPosts = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean(); // Convert to plain JS object
 
-    // Convert to absolute URLs if needed
-    const postsWithFullUrls = posts.map(post => ({
-      ...post,
-      imageUrl: `${req.protocol}://${req.get('host')}/${post.imageUrl}`
-    }));
-
-    res.status(200).json(postsWithFullUrls);
-
+    
   } catch (err) {
     console.error("Failed to fetch posts:", err);
     res.status(500).json({ message: "Failed to fetch posts" });

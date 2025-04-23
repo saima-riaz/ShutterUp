@@ -1,19 +1,22 @@
-const multer = require("multer");
+const cloudinary = require('cloudinary').v2;
 
-// Simple local storage solution
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Files will save in an 'uploads' folder
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Unique filename
-  }
-});
+const uploadToCloudinary = async (fileBuffer, folder = 'shutterup') => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: 'auto',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [{ width: 1200, crop: 'scale', quality: 'auto' }]
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
 
-// Multer setup for file upload
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
-});
+    uploadStream.end(fileBuffer);
+  });
+};
 
-module.exports = upload;
+module.exports = uploadToCloudinary;
