@@ -50,7 +50,7 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen -mt-16">
-      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
+      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <FontAwesomeIcon icon={faCamera} className="text-3xl mr-2 m-4" />
@@ -74,12 +74,12 @@ const Login = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
             <input
               type="email"
-              name="email"
+              name="email" placeholder="Enter your email"
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
-              required
+              required 
             />
           </div>
 
@@ -88,7 +88,7 @@ const Login = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               type={showPassword ? "text" : "password"}
-              name="password"
+              name="password" placeholder="Enter your password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './dashboard/Dashboard';
 import ProtectedRoute from './util/ProtectedRoute';
 import { AuthProvider } from './util/AuthContext';
+import Upload from './dashboard/Upload';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/login" element={<><Navbar /><Login /></>} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/upload" element={<Upload />} />
           </Route>
         </Routes>
       </Router>

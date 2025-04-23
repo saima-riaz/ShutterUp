@@ -53,7 +53,7 @@ const Dashboard = () => {
   }
   
   return (
-    <div className="flex min-h-screen font-sans bg-gradient-to-br from-green-100 to-blue-200">
+    <div className="flex min-h-screen font-sans bg-gradient-to-br from-green-200 to-blue-100">
       {/* Sidebar */}
       <aside className="w-64 bg-white p-6 rounded-tr-3xl rounded-br-3xl shadow-md">
         <div className="flex items-center gap-2 mb-10">
@@ -85,7 +85,7 @@ const Dashboard = () => {
             <button className="hover:text-blue-600">Explore</button>
           </div>
           <div className="flex gap-2">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg">Upload</button>
+            <button onClick={() => navigate('/upload')} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Upload</button>
             <button onClick={logout} className="px-4 py-2 bg-blue-500 text-white rounded-lg">
         Logout
       </button>

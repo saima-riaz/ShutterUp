@@ -39,8 +39,8 @@ const Signup = () => {
   {/* Frontend part */}
 
   return (
-    <div className="flex justify-center items-center min-h-screen -mt-16">
-      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
+    <div className="flex justify-center items-center min-h-screen -mt-8">
+      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Create your account</h2>
 
         {message && (

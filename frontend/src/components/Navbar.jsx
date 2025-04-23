@@ -16,7 +16,7 @@ const Navbar = () => {
         
         {/* menu button */}
         <button 
-          className="md:hidden p-2"
+          className="md:hidden p-2 "
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <FontAwesomeIcon icon={faBars} size="lg" />
