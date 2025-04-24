@@ -15,12 +15,12 @@ const Upload = () => {
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!file) return;
-
+  
     const token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("image", file);
-    formData.append("caption", "Your caption here");
-
+    formData.append("caption", caption);
+  
     setUploading(true);
     try {
       const response = await fetch("http://localhost:5000/api/posts", {
@@ -30,19 +30,15 @@ const Upload = () => {
         },
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload");
-      }
-
-      navigate("/"); // redirect to Dashboard
+  
+      if (!response.ok) throw new Error("Failed to upload");
+      navigate("/dashboard");
     } catch (error) {
       alert(error.message);
     } finally {
       setUploading(false);
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-200 to-blue-100">
         <button

@@ -11,21 +11,20 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors()); // Allow frontend requests
+app.use(cors());
 app.use(fileUpload({
   useTempFiles: false,
-  limits: { fileSize: 10 * 1024 * 1024 } // size 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 }));
 
 // Database connection
-mongoose
-  .connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error(err));
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/posts", require("./routes/postRoutes"))
+app.use("/api/posts", require("./routes/postRoutes"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

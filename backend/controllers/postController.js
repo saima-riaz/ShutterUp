@@ -1,26 +1,26 @@
 const Post = require("../models/Post");
 const uploadToCloudinary = require("../utils/Upload");
 
-// Create a new post
 exports.createPost = async (req, res) => {
   try {
     const { caption } = req.body;
 
-    if (!req.file?.image) {
+    if (!req.files?.image) {
       return res.status(400).json({ message: "No image file uploaded" });
     }
 
-
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ message: "Unauthorized: No user found" });
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const imageUrl = req.file.path; // Local path like "uploads/123-cat.jpg"
-
+    // Upload to Cloudinary
+    const result = await uploadToCloudinary(req.files.image.data);
+    
     const post = await Post.create({
       user: req.user.id,
-      imageUrl,
+      imageUrl: result.secure_url,
       caption,
+      cloudinaryId: result.public_id
     });
 
     res.status(201).json(post);
@@ -30,14 +30,10 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// Get posts - simplified version
 exports.getPosts = async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.user.id })
-      .sort({ createdAt: -1 })
-      .lean(); // Convert to plain JS object
-
-    
+    const posts = await Post.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.status(200).json(posts);
   } catch (err) {
     console.error("Failed to fetch posts:", err);
     res.status(500).json({ message: "Failed to fetch posts" });
