@@ -5,6 +5,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   const login = (token, userData) => {
     localStorage.setItem('token', token);
@@ -21,22 +22,30 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        logout();
+      if (storedToken && storedUser) {
+        try {
+          // Add token validation here if needed
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Auth initialization error:", error);
+          logout();
+        }
       }
-    }
+      setIsLoading(false); // Mark initialization complete
+    };
+
+    initializeAuth();
   }, []);
 
+  // Only render children when auth state is initialized
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };
