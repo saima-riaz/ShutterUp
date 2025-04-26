@@ -3,7 +3,6 @@ const uploadToCloudinary = require("../utils/Upload");
 
 exports.createPost = async (req, res) => {
   try {
-    const { caption } = req.body;
 
     if (!req.files?.image) {
       return res.status(400).json({ message: "No image file uploaded" });
@@ -19,7 +18,6 @@ exports.createPost = async (req, res) => {
     const post = await Post.create({
       user: req.user.id,
       imageUrl: result.secure_url,
-      caption,
       cloudinaryId: result.public_id
     });
 
