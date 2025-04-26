@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faCamera } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faCamera, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../util/AuthContext";
 
 const Dashboard = () => {
@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedPhoto, setSelectedPhoto] = useState(null); // Fixed typo in variable name
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const Dashboard = () => {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-8"> {/* Changed flex- to flex-1 */}
+      <main className="flex-1 p-8">
         {/* Top Navbar */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-3 text-lg font-medium text-gray-700">
@@ -87,8 +88,8 @@ const Dashboard = () => {
           <div className="flex gap-2">
             <button onClick={() => navigate('/upload')} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Upload</button>
             <button onClick={logout} className="px-4 py-2 bg-blue-500 text-white rounded-lg">
-        Logout
-      </button>
+              Logout
+            </button>
           </div>
         </div>
 
@@ -97,14 +98,58 @@ const Dashboard = () => {
           {photos.length === 0 ? (
             <p className="text-gray-500">No photos uploaded yet.</p>
           ) : (
-            photos.map((photo, index) => (
-              <div
-                key={index}
-                className="w-full h-48 bg-gray-300 rounded-lg shadow-inner animate-pulse">
+            photos.map((photo) => (
+              <div 
+                key={photo._id} 
+                className="relative w-full h-48 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => setSelectedPhoto(photo)}
+              >
+                <img 
+                  src={photo.imageUrl} 
+                  alt="User upload"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null; 
+                    e.target.src = 'placeholder-image-url.jpg'
+                  }}
+                />
               </div>
             ))
           )}
         </div>
+
+        {/* upload image full-size view */}
+        {selectedPhoto && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <div 
+              className="relative max-w-4xl w-full rounded-lg overflow-hidden"
+              onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking content
+            >
+              <button // close button
+                className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-2 z-10 hover:bg-opacity-75 transition"
+                onClick={() => setSelectedPhoto(null)}
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+              <img 
+                src={selectedPhoto.imageUrl} 
+                alt="Full size preview"
+                className="w-full max-h-[90vh] object-contain"
+              />
+              <div className="p-4">
+                {selectedPhoto.caption && (
+                  <p className="text-white">{selectedPhoto.caption}</p>
+                )}
+                <p className="text-sm text-white mt-2">
+                  Uploaded on {new Date(selectedPhoto.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
