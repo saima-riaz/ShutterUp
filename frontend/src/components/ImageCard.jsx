@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { deletePhoto } from '../util/photoAPI';
 
+/* ===== IMAGE CARD COMPONENT ===== */
+/**
+ * Handles photo deletion with confirmation
+ * Shows loading state and error messages
+ */
 const ImageCard = ({ photoId, onSuccess }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleDelete = async () => {
+  /* ===== DELETE HANDLER ===== */
+  const handleDelete = async (e) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this photo?')) return;
     
@@ -14,20 +21,8 @@ const ImageCard = ({ photoId, onSuccess }) => {
     setError(null);
     
     try {
-      const response = await fetch(`http://localhost:5000/api/posts/${photoId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Deletion failed');
-      }
-
-      onSuccess(); // Refresh the photo list
+      await deletePhoto(photoId);
+      onSuccess();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,7 +32,7 @@ const ImageCard = ({ photoId, onSuccess }) => {
 
   return (
     <div className="absolute top-2 right-2 bg-white bg-opacity-70 rounded-full p-2"
-    onClick={e => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
     >
       <button
         onClick={handleDelete}
