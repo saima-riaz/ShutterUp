@@ -8,7 +8,9 @@ const uploadToCloudinary = async (fileBuffer, folder = 'shutterup') => {
         folder,
         resource_type: 'auto',
         allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-        transformation: [{ width: 1200, crop: 'scale', quality: 'auto' }]
+        transformation: [{ width: 1200, crop: 'scale', quality: 'auto' }],
+        type: 'private'
+        
       },
       (error, result) => {
         if (error) reject(error);
