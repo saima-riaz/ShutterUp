@@ -5,12 +5,10 @@ const uploadToCloudinary = async (fileBuffer, folder = 'shutterup') => {
 
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder,
+        folder: 'shutterup',
         resource_type: 'auto',
         allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-        transformation: [{ width: 1200, crop: 'scale', quality: 'auto' }],
-        type: 'private'
-        
+        transformation: [{ width: 1200, crop: 'scale', quality: 'auto' }] 
       },
       (error, result) => {
         if (error) reject(error);
