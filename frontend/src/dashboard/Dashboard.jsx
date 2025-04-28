@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCamera, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../util/AuthContext";
+import ImageCard from '../components/ImageCard';
 
 
 /* ===== MAIN DASHBOARD COMPONENT ===== */
@@ -82,6 +83,7 @@ const Dashboard = () => {
             <h1 className="text-2xl font-lavish font-bold text-gray-800">ShutterUp</h1>
           </div>
         </aside>
+
         {/* Skeleton photo grid */}
         <main className="flex-1 p-8">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -149,30 +151,33 @@ const Dashboard = () => {
         </div>
 
         {/*---- Photo Grid ----- */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {photos.length === 0 ? (
-            <p className="text-gray-500">No photos uploaded yet.</p>
-          ) : (
-            photos.map((photo) => (
-              <div 
-                key={photo._id} 
-                className="relative w-full h-48 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => setSelectedPhoto(photo)}
-              >
-                {/* Photo thumbnail */}
-                <img 
-                  src={photo.imageUrl} 
-                  alt="User upload"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.onerror = null; 
-                    e.target.src = 'placeholder-image-url.jpg'
-                  }}
-                />
-              </div>
-            ))
-          )}
+
+ <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+  {photos.map((photo) => (
+    <div 
+      key={photo._id} 
+      className="relative group hover:shadow-lg transition-shadow"
+    >
+      <div className="relative w-full h-48 rounded-lg overflow-hidden"
+      onClick={() => setSelectedPhoto(photo)}
+      >
+        <img 
+          src={photo.imageUrl} 
+          alt="User upload"
+          className="w-full h-full object-cover"
+        />
+        
+        {/* Delete button appears on hover */}
+        <div className="absolute inset-0 flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <ImageCard
+            photoId={photo._id}
+            onSuccess={fetchUserPhotos}
+          />
         </div>
+      </div>
+    </div>
+  ))}
+</div>
 
         {/* ---- image view graphical control ----- */}
         {selectedPhoto && (
@@ -191,12 +196,14 @@ const Dashboard = () => {
               >
                 <FontAwesomeIcon icon={faTimes} />
               </button>
+
               {/* Full-size image */}
               <img 
                 src={selectedPhoto.imageUrl} 
                 alt="Full size preview"
                 className="w-full max-h-[90vh] object-contain"
               />
+
               {/* Photo metadata */}
               <div className="p-4">
                 {selectedPhoto.caption && (
