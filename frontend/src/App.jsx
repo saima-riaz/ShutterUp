@@ -7,6 +7,8 @@ import Dashboard from './dashboard/Dashboard';
 import ProtectedRoute from './util/ProtectedRoute';
 import { AuthProvider } from './util/AuthContext';
 import Upload from './dashboard/Upload';
+import Gallery from "./gallery/Gallery"; 
+import GalleryDetail from "./gallery/CreateEvent";
 
 
 
@@ -21,6 +23,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<Upload />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/gallery/:url" element={<GalleryDetail />} />
           </Route>
         </Routes>
       </Router>

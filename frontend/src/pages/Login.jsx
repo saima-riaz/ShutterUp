@@ -113,7 +113,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-yellow-900 transition ${
+            className={`w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-green-800 transition ${
               loading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >

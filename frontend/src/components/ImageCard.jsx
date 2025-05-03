@@ -15,7 +15,10 @@ const ImageCard = ({ photoId, onSuccess }) => {
   /* ===== DELETE HANDLER ===== */
   const handleDelete = async (e) => {
     e.stopPropagation();
-    if (!window.confirm('Are you sure you want to delete this photo?')) return;
+    
+    if (!window.confirm('Are you sure you want to delete this photo?')) {
+      return;
+    }
     
     setIsDeleting(true);
     setError(null);
@@ -31,18 +34,21 @@ const ImageCard = ({ photoId, onSuccess }) => {
   };
 
   return (
-    <div className="absolute top-2 right-2 bg-white bg-opacity-70 rounded-full p-2"
-      onClick={e => e.stopPropagation()}
+    <div 
+      className="absolute top-2 right-2 bg-white bg-opacity-70 rounded-full p-2"
+      onClick={(e) => e.stopPropagation()}
     >
       <button
         onClick={handleDelete}
         disabled={isDeleting}
         className="text-red-600 hover:text-red-800 transition-colors"
         title="Delete photo"
+        aria-label="Delete photo"
       >
         <FontAwesomeIcon icon={faTrash} />
-        {isDeleting && '...'}
+        {isDeleting && <span className="ml-1">...</span>}
       </button>
+      
       {error && (
         <div className="absolute top-full right-0 mt-1 bg-red-100 text-red-800 text-xs p-1 rounded">
           {error}
