@@ -1,4 +1,3 @@
-// Fake authMiddleware for testing
 module.exports = (req, res, next) => {
   // Simulate an authenticated user
   req.user = {

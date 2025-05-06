@@ -1,4 +1,4 @@
-import ImageCard from "../../components/ImageCard";
+import ImageCard from "../../gallery/components/ImageCard";
 
 const PhotoGrid = ({ photos, onPhotoClick, refreshPhotos }) => (
   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

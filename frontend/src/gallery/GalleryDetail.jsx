@@ -29,7 +29,7 @@ const GalleryDetail = () => {
   if (!gallery) return <div>Gallery not found</div>;
 
   return (
-    <div className="p-8">
+    <div className="p-8 min-h-screen">
       <button 
         onClick={() => navigate(-1)}
         className="mb-4 text-blue-600 hover:underline"

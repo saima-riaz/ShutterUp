@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ onLogout, onUpload }) => {  // Add onUpload prop
+const Sidebar = ({ onLogout, onUpload }) => {
   const navigate = useNavigate();
 
   return (
@@ -22,10 +22,10 @@ const Sidebar = ({ onLogout, onUpload }) => {  // Add onUpload prop
           onClick={() => navigate('/gallery')}
           className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg"
         >
-          🖼️ Create Gallery
+          🖼️ Create Your Gallery
         </button>
         <button 
-          onClick={onUpload}  // Add Upload button
+          onClick={onUpload}
           className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg"
         >
           <FontAwesomeIcon icon={faUpload} /> Upload

@@ -1,58 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Gallery = require('../models/Gallery'); // Mongoose model
+const galleryController = require("../controllers/galleryController");
+const authMiddleware = require("../middleware/authMiddleware");
 
+// POST route for creating galleries
+router.post("/create", authMiddleware, galleryController.createGallery);
 
-// =============================================
-//  GALLERY CRUD OPERATIONS
-// =============================================
+// GET route for fetching all galleries
+router.get("/", authMiddleware, galleryController.getGalleries);
 
-/**
- * @route   POST /api/gallery/create
- * @desc    Create a new gallery
- * @access  Private
- */
+// GET route for single gallery by URL
+router.get("/:url", authMiddleware, galleryController.getGalleryByUrl);
 
-// Create a new gallery
-router.post('/create', async (req, res) => {
-  try {
-    const { title, description, url } = req.body;
-    const newGallery = new Gallery({ title, description, url });
-    await newGallery.save();
-
-    res.status(201).json({ message: "Gallery created successfully." });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error." });
-  }
-});
-
-// Get all galleries
-router.get('/', async (req, res) => {
-  try {
-    const galleries = await Gallery.find().sort({ createdAt: -1 });
-    res.json(galleries);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to fetch galleries." });
-  }
-});
-
-
-router.get('/:url', async (req, res) => {
-  try {
-    const gallery = await Gallery.findOne({ url: req.params.url });
-    
-    if (!gallery) {
-      return res.status(404).json({ message: "Gallery not found" });
-    }
-
-    res.json(gallery);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to fetch gallery" });
-  }
-});
+// DELETE route for galleries (using _id for MongoDB)
+router.delete('/:_id', authMiddleware, galleryController.deleteGallery);
 
 module.exports = router;
-

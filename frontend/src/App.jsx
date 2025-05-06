@@ -8,7 +8,7 @@ import ProtectedRoute from './util/ProtectedRoute';
 import { AuthProvider } from './util/AuthContext';
 import Upload from './dashboard/Upload';
 import Gallery from "./gallery/Gallery"; 
-import GalleryDetail from "./gallery/CreateEvent";
+import GalleryDetail from "./gallery/GalleryDetail";
 
 
 

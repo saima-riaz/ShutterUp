@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { deletePhoto } from '../util/photoAPI';
+import { deletePhoto } from '../../util/photoAPI';
 
 /* ===== IMAGE CARD COMPONENT ===== */
 /**

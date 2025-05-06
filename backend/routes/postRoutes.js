@@ -12,4 +12,5 @@ router.get("/", authMiddleware, postController.getPosts);
 // route to delete photo
 router.delete('/:id', authMiddleware, postController.deletePost);
 
+
 module.exports = router;
