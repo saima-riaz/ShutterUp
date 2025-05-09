@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const gallerySchema = new mongoose.Schema({
   title: {
-    type: String,
+  type: String,
     required: true,
   },
   description: {
@@ -16,9 +16,14 @@ const gallerySchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // This links to the 'User' model, assuming you have a 'User' model
+    ref: 'User',
     required: true
-  }
+  },
+  photos: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+  }],
+  
 }, { timestamps: true });
 
 module.exports = mongoose.model('Gallery', gallerySchema);
