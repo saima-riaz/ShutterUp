@@ -73,6 +73,7 @@ export const fetchGalleries = async () => {
 };
 
 // Fetch single gallery by URL (for gallery detail page)
+
 export const fetchGalleryByUrl = async (url) => {
   try {
     const token = localStorage.getItem('token');
@@ -91,6 +92,8 @@ export const fetchGalleryByUrl = async (url) => {
     throw error;
   }
 };
+
+
 
 /* ===== DELETE GALLERY ===== */
 export const deleteGallery = async (_id) => {
