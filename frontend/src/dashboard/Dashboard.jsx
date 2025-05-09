@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../util/AuthContext";
 import { fetchUserPhotos, fetchGalleries, deleteGallery } from "../util/photoAPI";
-
 import Sidebar from "./components/Sidebar";
 import PhotoGrid from "./components/PhotoGrid";
 import PhotoModal from "./components/PhotoModal";
-import LoadingState from "./components/LoadingState";
 import GalleryCard from "../gallery/components/GalleryCard";
+
 
 const Dashboard = () => {
   const { user, logout, isLoading } = useAuth();
@@ -64,9 +63,9 @@ const Dashboard = () => {
   }, [user, isLoading, navigate, logout]);
 
   // Show loading or error states
-  if (isLoading) return <LoadingState type="auth" />;
-  if (loading) return <LoadingState type="content" />;
-  if (error) return <LoadingState type="error" error={error} />;
+  if (isLoading) return <div className="grid place-items-center h-screen">Loading session...</div>;
+  if (loading) return <div className="p-8">Loading content...</div>;
+  if (error) return <div className="p-8 text-red-500">{error.message || "Error"}</div>;
 
   return (
     <div className="flex min-h-screen font-sans bg-gradient-to-br from-green-200 to-blue-100">
@@ -110,6 +109,7 @@ const Dashboard = () => {
           photos={photos}
           onPhotoClick={setSelectedPhoto}
           refreshPhotos={loadPhotos}
+          galleries={galleries} // // Pass galleries to PhotoGrid
         />
 
         {/* === Photo Modal Section === */}
