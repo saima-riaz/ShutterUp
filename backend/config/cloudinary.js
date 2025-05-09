@@ -1,4 +1,4 @@
-require('dotenv').config(); // Add this at the very top
+require('dotenv').config(); 
 
 console.log('Checking env vars:', {
   cloud: process.env.CLOUDINARY_CLOUD_NAME,
