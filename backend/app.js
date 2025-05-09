@@ -12,7 +12,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-app.use(fileUpload({
+app.use(fileUpload({     // connect to cloudinary
   useTempFiles: false,
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 }));
@@ -26,7 +26,6 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/posts", require("./routes/postRoutes"));
 app.use('/api/gallery', require('./routes/galleryRoutes'));
-
 
 
 const PORT = process.env.PORT || 5000;
