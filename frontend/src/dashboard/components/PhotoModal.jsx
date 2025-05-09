@@ -43,4 +43,4 @@ const PhotoModal = ({ photo, onClose }) => (
   </div>
 );
 
-export default PhotoModal;  // This is the crucial line that was missing
+export default PhotoModal; 

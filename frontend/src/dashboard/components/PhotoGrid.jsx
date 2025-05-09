@@ -1,6 +1,6 @@
 import ImageCard from "../../gallery/components/ImageCard";
 
-const PhotoGrid = ({ photos, onPhotoClick, refreshPhotos }) => (
+const PhotoGrid = ({ photos, onPhotoClick, refreshPhotos, galleries }) => (
   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
     {photos.map((photo) => (
       <div key={photo._id} className="relative group hover:shadow-lg transition-shadow">
@@ -17,6 +17,7 @@ const PhotoGrid = ({ photos, onPhotoClick, refreshPhotos }) => (
             <ImageCard
               photoId={photo._id}
               onSuccess={refreshPhotos}
+              galleries={galleries}
             />
           </div>
         </div>
