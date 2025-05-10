@@ -11,7 +11,11 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Frontend origin
+  credentials: true               // Allow cookies and credentials
+}));
+
 app.use(fileUpload({     // connect to cloudinary
   useTempFiles: false,
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
