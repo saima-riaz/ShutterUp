@@ -16,5 +16,8 @@ router.get("/:url", authMiddleware, galleryController.getGalleryByUrl);
 // DELETE route for galleries (using _id for MongoDB)
 router.delete('/:_id', authMiddleware, galleryController.deleteGallery);
 
+// POST route for adding photos to galleries
+router.post('/:url/add-photo', authMiddleware, galleryController.addPhotoToGallery);
+
 
 module.exports = router;
