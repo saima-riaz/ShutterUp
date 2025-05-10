@@ -99,11 +99,12 @@ exports.addPhotoToGallery = async (req, res) => {
       url: req.params.url, 
       user: req.user.id 
     });
-
+// Find the gallery by URL
     if (!gallery) {
       console.log(`Gallery not found: ${req.params.url}`);
       return res.status(404).json({ message: "Gallery not found" });
     }
+    
 
     if (!gallery.photos.includes(photoId)) {
       gallery.photos.push(photoId);
