@@ -19,23 +19,36 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   // Load user photos and galleries from the API
-  const loadPhotos = async () => {
-    try {
-      setLoading(true);
-      const [photosData, galleriesData] = await Promise.all([
-        fetchUserPhotos(),
-        fetchGalleries()
-      ]);
-      setPhotos(photosData);
-      setGalleries(galleriesData);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-      if (err.message.includes("401")) logout(); // Auto logout on auth error
-    } finally {
-      setLoading(false);
-    }
-  };
+  // In Dashboard.jsx
+const loadPhotos = async () => {
+  try {
+    setLoading(true);
+    const [photosData, galleriesData] = await Promise.all([
+      fetchUserPhotos(),
+      fetchGalleries()
+    ]);
+    
+    // Get all photo IDs that are in galleries
+    const photosInGalleries = new Set();
+    galleriesData.forEach(gallery => {
+      gallery.photos?.forEach(photo => {
+        photosInGalleries.add(photo._id);
+      });
+    });
+    
+    // Filter out photos that are already in galleries
+    const standalonePhotos = photosData.filter(photo => !photosInGalleries.has(photo._id));
+    
+    setPhotos(standalonePhotos);
+    setGalleries(galleriesData);
+    setError(null);
+  } catch (err) {
+    setError(err.message);
+    if (err.message.includes("401")) logout();
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Handle gallery deletion with confirmation
   const handleDeleteGallery = async (galleryId, e) => {
@@ -50,6 +63,19 @@ const Dashboard = () => {
       setError(err.message);
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  // Handle photo removal
+  const handleRemovePhoto = async (photoId, e) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this photo?")) return;
+
+    try {
+      await deletePhoto(photoId); // Delete the photo
+      await loadPhotos(); // Refresh photos after deletion
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -110,6 +136,7 @@ const Dashboard = () => {
           onPhotoClick={setSelectedPhoto}
           refreshPhotos={loadPhotos}
           galleries={galleries} // // Pass galleries to PhotoGrid
+          handleRemovePhoto={handleRemovePhoto}
         />
 
         {/* === Photo Modal Section === */}
