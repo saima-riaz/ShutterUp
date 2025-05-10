@@ -1,18 +1,22 @@
 const Gallery = require('../models/Gallery');
 
-// Create gallery (POST /create)
+// create new gallery
 exports.createGallery = async (req, res) => {
   try {
     const { title, description, url } = req.body;
+
+    // validate required fields
     if (!title || !description || !url) {
       return res.status(400).json({ message: "Title, description, and URL are required" });
     }
 
+ // check if a gallery with the same URL already exists
     const existingGallery = await Gallery.findOne({ url });
     if (existingGallery) {
       return res.status(400).json({ message: "Gallery URL already exists" });
     }
 
+    // create and save the new gallery
     const gallery = await Gallery.create({ 
       title, 
       description, 
@@ -27,12 +31,12 @@ exports.createGallery = async (req, res) => {
   }
 };
 
-// Get all galleries (GET / for user)
+// fetch all galleries for current user
 exports.getGalleries = async (req, res) => {
   try {
     const galleries = await Gallery.find({ user: req.user.id })
-      .populate('user', 'username email profilePic')
-      .populate('photos');
+      .populate('user', 'username email profilePic') // // user info
+      .populate('photos'); // associated photos
     
     res.status(200).json(galleries);
   } catch (error) {
@@ -41,12 +45,12 @@ exports.getGalleries = async (req, res) => {
   }
 };
 
-// Get single gallery by URL (GET /:url)
+// fetch single gallery by URL for current user 
 exports.getGalleryByUrl = async (req, res) => {
   try {
     const gallery = await Gallery.findOne({ 
       url: req.params.url,
-      user: req.user.id // Added user filter for security
+      user: req.user.id // security(ensure user only accesses their own gallery)
     }).populate('photos');
     
     if (!gallery) {
@@ -61,12 +65,12 @@ exports.getGalleryByUrl = async (req, res) => {
   }
 };
 
-// Delete gallery (DELETE /:_id)
+// Delete gallery by its id
 exports.deleteGallery = async (req, res) => {
   try {
     const gallery = await Gallery.findOneAndDelete({ 
       _id: req.params._id, 
-      user: req.user.id 
+      user: req.user.id // // Ensure only the owner can delete
     });
    
     if (!gallery) {
@@ -91,7 +95,7 @@ exports.deleteGallery = async (req, res) => {
   }
 };
 
-// Add photo to gallery
+// add a photo to a gallery by gallery URL
 exports.addPhotoToGallery = async (req, res) => {
   try {
     const { photoId } = req.body;
@@ -99,13 +103,13 @@ exports.addPhotoToGallery = async (req, res) => {
       url: req.params.url, 
       user: req.user.id 
     });
-// Find the gallery by URL
+// find the gallery by URL
     if (!gallery) {
       console.log(`Gallery not found: ${req.params.url}`);
       return res.status(404).json({ message: "Gallery not found" });
     }
     
-
+// Add photo if it's not already in the gallery
     if (!gallery.photos.includes(photoId)) {
       gallery.photos.push(photoId);
       await gallery.save();

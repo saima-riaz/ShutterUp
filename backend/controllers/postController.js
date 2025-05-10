@@ -2,13 +2,16 @@ const Post = require("../models/Post");
 const uploadToCloudinary = require("../utils/Upload");
 const cloudinary = require('../config/cloudinary');
 
+// create a new photo post
 exports.createPost = async (req, res) => {
   try {
 
+    // check if image is uploaded
     if (!req.files?.image) {
       return res.status(400).json({ message: "No image file uploaded" });
     }
 
+    // Ensure user is authenticated
     if (!req.user?.id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -16,6 +19,7 @@ exports.createPost = async (req, res) => {
     // Upload to Cloudinary
     const result = await uploadToCloudinary(req.files.image.data);
     
+    // save post in database
     const post = await Post.create({
       user: req.user.id,
       imageUrl: result.secure_url,
@@ -29,7 +33,7 @@ exports.createPost = async (req, res) => {
   }
 };
 
-
+// get all post from current user
 exports.getPosts = async (req, res) => {
   try {
     const posts = await Post.find({ user: req.user.id }).sort({ createdAt: -1 });
@@ -40,11 +44,11 @@ exports.getPosts = async (req, res) => {
   }
 };
 
-// delete photo
+// delete photo and its image from Cloudinary
 
 exports.deletePost = async (req, res) => {
   try {
-    // Find and delete post from database
+    // Find post and ensure its belongs to the user
     const post = await Post.findOneAndDelete({
       _id: req.params.id,
       user: req.user.id
@@ -57,7 +61,7 @@ exports.deletePost = async (req, res) => {
       });
     }
 
-    // Delete from Cloudinary
+    // Delete image from Cloudinary
     const cloudinaryResult = await cloudinary.uploader.destroy(post.cloudinaryId, {
       resource_type: 'image'
     });
