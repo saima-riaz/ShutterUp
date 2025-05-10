@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faBookmark } from '@fortawesome/free-solid-svg-icons';
-import { deletePhoto } from '../../util/photoAPI';
+import { deletePhoto, API_BASE } from '../../util/photoAPI';
 
 /* ===== IMAGE CARD COMPONENT ===== */
 /**
@@ -21,7 +21,7 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
       setIsDeleting(true);
       try {
         await deletePhoto(photoId);
-        onSuccess();
+        //onSuccess();
       } catch (err) {
         setError(err.message);
       } finally {
@@ -35,7 +35,7 @@ const handleAddToGallery = async (e) => {
   if (!selectedGallery) return;
 
   try {
-    const response = await fetch(`/api/gallery/${selectedGallery}/add-photo`, {
+    const response = await fetch(`${API_BASE}/gallery/${selectedGallery}/add-photo`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ photoId }),
@@ -43,6 +43,7 @@ const handleAddToGallery = async (e) => {
     });
     if (!response.ok) throw new Error('Failed to add to gallery');
     alert('Added to gallery!');
+    onSuccess(); // Remove photo from dashboard
   } catch (err) {
     setError(err.message);
   }
@@ -53,6 +54,7 @@ return (
     className="absolute top-2 right-2 space-y-2"
     onClick={(e) => e.stopPropagation()}
   >
+
     {/* Gallery selector */}
     {galleries && (
       <div className="flex gap-1 bg-white bg-opacity-70 p-1 rounded">
