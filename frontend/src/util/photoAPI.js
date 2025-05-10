@@ -3,7 +3,7 @@
  * Centralized API calls for photo-related operations
  */
 
-const API_BASE = "http://localhost:5000/api";
+export const API_BASE = "http://localhost:5000/api";
 
 /* ===== CLOUDINARY PHOTO OPERATIONS ===== */
 
