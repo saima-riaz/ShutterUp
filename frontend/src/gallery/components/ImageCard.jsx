@@ -14,91 +14,90 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
   const [error, setError] = useState(null);
 
   /* ===== DELETE HANDLER ===== */    
-    const handleDelete = async (e) => {
-      e.stopPropagation();
-      if (!window.confirm('Are you sure you want to delete this photo?')) return;
-      
-      setIsDeleting(true);
-      try {
-        await deletePhoto(photoId);
-        //onSuccess();
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsDeleting(false);
-      }
-    };
-/* ========= GALLERY HANDLER========*/
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this photo?')) return;
 
-const handleAddToGallery = async (e) => {
-  e.stopPropagation();
-  if (!selectedGallery) return;
+    setIsDeleting(true);
+    try {
+      await deletePhoto(photoId); // Call API to delete the photo
+      onSuccess(); // Refresh photos in the parent component after deletion
+    } catch (err) {
+      setError(err.message); // Handle any errors during deletion
+    } finally {
+      setIsDeleting(false); // Reset loading state
+    }
+  };
 
-  try {
-    const response = await fetch(`${API_BASE}/gallery/${selectedGallery}/add-photo`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ photoId }),
-      credentials: 'include'
-    });
-    if (!response.ok) throw new Error('Failed to add to gallery');
-    alert('Added to gallery!');
-    onSuccess(); // Remove photo from dashboard
-  } catch (err) {
-    setError(err.message);
-  }
-};
+  /* ===== GALLERY HANDLER ===== */
+  const handleAddToGallery = async (e) => {
+    e.stopPropagation();
+    if (!selectedGallery) return; // Don't proceed if no gallery is selected
 
-return (
-  <div 
-    className="absolute top-2 right-2 space-y-2"
-    onClick={(e) => e.stopPropagation()}
-  >
+    try {
+      const response = await fetch(`${API_BASE}/gallery/${selectedGallery}/add-photo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photoId }),
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to add to gallery');
+      alert('Added to gallery!');
+      onSuccess(); // Refresh photos after adding to gallery
+    } catch (err) {
+      setError(err.message); // Handle any errors during adding to gallery
+    }
+  };
 
-    {/* Gallery selector */}
-    {galleries && (
-      <div className="flex gap-1 bg-white bg-opacity-70 p-1 rounded">
-        <select 
-          value={selectedGallery}
-          onChange={(e) => setSelectedGallery(e.target.value)}
-          className="text-xs p-1 border rounded"
-        >
-          <option value="">Add to...</option>
-          {galleries.map(gallery => (
-            <option key={gallery._id} value={gallery.url}>
-              {gallery.title}
-            </option>
-          ))}
-        </select>
-        <button 
-          onClick={handleAddToGallery}
-          disabled={!selectedGallery}
-          className="text-blue-600 hover:text-blue-800"
-          title="Add to gallery"
-        >
-          <FontAwesomeIcon icon={faBookmark} size="xs"/>
-        </button>
-      </div>
-    )}
-
-    {/* Delete button */}
-    <button
-      onClick={handleDelete}
-      disabled={isDeleting}
-      className="block ml-auto text-red-600 hover:text-red-800"
-      title="Delete photo"
+  return (
+    <div 
+      className="absolute top-2 right-2 space-y-2"
+      onClick={(e) => e.stopPropagation()}
     >
-      <FontAwesomeIcon icon={faTrash} />
-      {isDeleting && <span className="ml-1">...</span>}
-    </button>
+      {/* Gallery selector */}
+      {galleries && (
+        <div className="flex gap-1 bg-white bg-opacity-70 p-1 rounded">
+          <select 
+            value={selectedGallery}
+            onChange={(e) => setSelectedGallery(e.target.value)}
+            className="text-xs p-1 border rounded"
+          >
+            <option value="">Add to...</option>
+            {galleries.map(gallery => (
+              <option key={gallery._id} value={gallery.url}>
+                {gallery.title}
+              </option>
+            ))}
+          </select>
+          <button 
+            onClick={handleAddToGallery}
+            disabled={!selectedGallery}
+            className="text-blue-600 hover:text-blue-800"
+            title="Add to gallery"
+          >
+            <FontAwesomeIcon icon={faBookmark} size="xs"/>
+          </button>
+        </div>
+      )}
 
-    {error && (
-      <div className="text-red-500 text-xs">
-        {error}
-      </div>
-    )}
-  </div>
-);
+      {/* Delete button */}
+      <button
+        onClick={handleDelete}
+        disabled={isDeleting}
+        className="block ml-auto text-red-600 hover:text-red-800"
+        title="Delete photo"
+      >
+        <FontAwesomeIcon icon={faTrash} />
+        {isDeleting && <span className="ml-1">...</span>}
+      </button>
+
+      {error && (
+        <div className="text-red-500 text-xs">
+          {error}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ImageCard;
