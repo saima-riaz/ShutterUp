@@ -10,6 +10,42 @@ const Gallery = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    const galleryData = {
+      title,
+      description,
+      url,
+    };
+  
+    try {
+      const token = localStorage.getItem('token'); // 🔹 Get token from storage
+      const response = await fetch("http://localhost:5000/api/gallery/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // 🔹 Add this line
+        },
+        body: JSON.stringify(galleryData),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        setMessage(data.message || "Gallery creation failed.");
+      } else {
+        setMessage("");
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Something went wrong. Please try again.");
+    }
+  };
+
+
+
+  /*const handleSubmit = async (e) => {
+    e.preventDefault();
 
     const galleryData = {
       title,
@@ -38,7 +74,9 @@ const Gallery = () => {
       console.error("Error:", error);
       setMessage("Something went wrong. Please try again.");
     }
-  };
+  };*/
+
+
 
   return (
     <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-green-200 to-blue-100">

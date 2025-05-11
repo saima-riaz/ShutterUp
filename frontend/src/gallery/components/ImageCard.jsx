@@ -2,50 +2,59 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faBookmark } from '@fortawesome/free-solid-svg-icons';
 import { deletePhoto, API_BASE } from '../../util/photoAPI';
+import { useAuth } from '../../util/AuthContext'; // Add this import
 
-/* ===== IMAGE CARD COMPONENT ===== */
-/**
- * Handles photo deletion with confirmation
- * Shows loading state and error messages
- */
 const ImageCard = ({ photoId, onSuccess, galleries }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isAddingToGallery, setIsAddingToGallery] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState('');
   const [error, setError] = useState(null);
+  const { token } = useAuth(); // Get the auth token
 
-  /* ===== DELETE HANDLER ===== */    
   const handleDelete = async (e) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this photo?')) return;
 
     setIsDeleting(true);
+    setError(null); // Clear previous errors
     try {
-      await deletePhoto(photoId); // Call API to delete the photo
-      onSuccess(); // Refresh photos in the parent component after deletion
+      await deletePhoto(photoId);
+      onSuccess();
     } catch (err) {
-      setError(err.message); // Handle any errors during deletion
+      setError(err.message || 'Failed to delete photo');
     } finally {
-      setIsDeleting(false); // Reset loading state
+      setIsDeleting(false);
     }
   };
 
-  /* ===== GALLERY HANDLER ===== */
   const handleAddToGallery = async (e) => {
     e.stopPropagation();
-    if (!selectedGallery) return; // Don't proceed if no gallery is selected
+    if (!selectedGallery) return;
 
+    setIsAddingToGallery(true);
+    setError(null); // Clear previous errors
+    
     try {
       const response = await fetch(`${API_BASE}/gallery/${selectedGallery}/add-photo`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photoId }),
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Add authorization header
+        },
+        body: JSON.stringify({ photoId })
       });
-      if (!response.ok) throw new Error('Failed to add to gallery');
-      alert('Added to gallery!');
-      onSuccess(); // Refresh photos after adding to gallery
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to add to gallery');
+      }
+
+      alert('Added to gallery successfully!');
+      onSuccess();
     } catch (err) {
-      setError(err.message); // Handle any errors during adding to gallery
+      setError(err.message);
+    } finally {
+      setIsAddingToGallery(false);
     }
   };
 
@@ -55,12 +64,13 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
       onClick={(e) => e.stopPropagation()}
     >
       {/* Gallery selector */}
-      {galleries && (
+      {galleries?.length > 0 && (
         <div className="flex gap-1 bg-white bg-opacity-70 p-1 rounded">
           <select 
             value={selectedGallery}
             onChange={(e) => setSelectedGallery(e.target.value)}
             className="text-xs p-1 border rounded"
+            disabled={isAddingToGallery}
           >
             <option value="">Add to...</option>
             {galleries.map(gallery => (
@@ -71,11 +81,12 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
           </select>
           <button 
             onClick={handleAddToGallery}
-            disabled={!selectedGallery}
-            className="text-blue-600 hover:text-blue-800"
+            disabled={!selectedGallery || isAddingToGallery}
+            className="text-blue-600 hover:text-blue-800 disabled:opacity-50"
             title="Add to gallery"
           >
             <FontAwesomeIcon icon={faBookmark} size="xs"/>
+            {isAddingToGallery && '...'}
           </button>
         </div>
       )}
@@ -84,15 +95,16 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
       <button
         onClick={handleDelete}
         disabled={isDeleting}
-        className="block ml-auto text-red-600 hover:text-red-800"
+        className="block ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
         title="Delete photo"
       >
         <FontAwesomeIcon icon={faTrash} />
         {isDeleting && <span className="ml-1">...</span>}
       </button>
 
+      {/* Error message */}
       {error && (
-        <div className="text-red-500 text-xs">
+        <div className="absolute top-full right-0 mt-1 bg-red-100 text-red-800 text-xs p-1 rounded max-w-xs">
           {error}
         </div>
       )}

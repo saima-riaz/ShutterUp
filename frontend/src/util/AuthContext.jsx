@@ -1,51 +1,78 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = (token, userData) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setToken(token);
-    setUser(userData);
-  };
-
-  const logout = () => {
+  // Wrap logout in useCallback to prevent unnecessary recreations
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
-  };
+  }, []);
+
+  // Wrap login in useCallback
+  const login = useCallback((newToken, userData) => {
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('user', JSON.stringify(userData));
+    setToken(newToken);
+    setUser(userData);
+  }, []);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      const storedToken = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
+    let isMounted = true; // Track mounted state
 
-      if (storedToken && storedUser) {
-        try {
-          // Add token validation here if needed
+    const initializeAuth = async () => {
+      try {
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+
+        if (!storedToken || !storedUser) {
+          if (isMounted) setIsLoading(false);
+          return;
+        }
+
+        const decoded = jwtDecode(storedToken);
+        
+        if (decoded.exp * 1000 < Date.now()) {
+          console.log("Token expired - auto logout");
+          logout();
+          return;
+        }
+
+        if (isMounted) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error("Auth initialization error:", error);
-          logout();
         }
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        if (isMounted) logout();
+      } finally {
+        if (isMounted) setIsLoading(false);
       }
-      setIsLoading(false); // Mark initialization complete
     };
 
     initializeAuth();
-  }, []);
 
-  // Only render children when auth state is initialized
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [logout]); // Only logout as dependency
+
+  // Skip if still loading
+  if (isLoading) {
+    return null; // Or loading spinner
+  }
+
   return (
     <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
