@@ -30,5 +30,3 @@ const uploadToCloudinary = async (fileBuffer, folder = 'shutterup') => {
 
 
 module.exports = uploadToCloudinary;
-
-

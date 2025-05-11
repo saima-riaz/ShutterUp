@@ -3,21 +3,22 @@ const router = express.Router();
 const galleryController = require("../controllers/galleryController");
 const authMiddleware = require("../middleware/authMiddleware");
 
+// 🔹 Apply authMiddleware to ALL routes in this file
+router.use(authMiddleware);
 
 // POST route for creating galleries
-router.post("/create", authMiddleware, galleryController.createGallery);
+router.post("/create", galleryController.createGallery);
 
 // GET route for fetching all galleries
-router.get("/", authMiddleware, galleryController.getGalleries);
+router.get("/", galleryController.getGalleries);
 
-// GET route send image fav gallery
-router.get("/:url", authMiddleware, galleryController.getGalleryByUrl);
+// GET route for fetching a single gallery by URL
+router.get("/:url", galleryController.getGalleryByUrl);
 
-// DELETE route for galleries (using _id MongoDB)
-router.delete('/:_id', authMiddleware, galleryController.deleteGallery);
+// DELETE route for galleries (using _id from MongoDB)
+router.delete('/:_id', galleryController.deleteGallery);
 
-// POST route for adding photos to galleries by using gallery's URL 
-router.post('/:url/add-photo', authMiddleware, galleryController.addPhotoToGallery);
+// POST route for adding photos to galleries (using gallery's URL)
+router.post('/:url/add-photo', galleryController.addPhotoToGallery);
 
-// Export the router to be used in main app
 module.exports = router;
