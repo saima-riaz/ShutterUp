@@ -13,11 +13,11 @@ router.get("/", authMiddleware, galleryController.getGalleries);
 // GET route send image fav gallery
 router.get("/:url", authMiddleware, galleryController.getGalleryByUrl);
 
-// DELETE route for galleries (using _id for MongoDB)
+// DELETE route for galleries (using _id MongoDB)
 router.delete('/:_id', authMiddleware, galleryController.deleteGallery);
 
-// POST route for adding photos to galleries
+// POST route for adding photos to galleries by using gallery's URL 
 router.post('/:url/add-photo', authMiddleware, galleryController.addPhotoToGallery);
 
-
+// Export the router to be used in main app
 module.exports = router;
