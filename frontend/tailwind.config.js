@@ -1,18 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+
+  // Specify the files Tailwind should scan for class names
   content: [
-    "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./index.html", // Include the index.html file
+    "./src/**/*.{js,jsx,ts,tsx}", // Include JavaScript, JSX, TypeScript,TSX,'src' directory
   ],
   theme: {
     extend: {
+      // Extend the default theme with custom values
       
-      fontFamily: {
+       fontFamily: {  // Add custom fonts to the theme
         sans: ['Satisfy", cursive', 'sans-serif'],
         lavish: ['"Lavishly Yours"', 'cursive'],
       },
       
-      screens: {
+      screens: { // Define custom breakpoints for responsive design
         'xs': '480px',
         'sm': '640px',
         'md': '768px',
@@ -21,5 +24,6 @@ module.exports = {
       }
     },
   },
-  plugins: [],
+  plugins: [], // No plugins are included in this setup
+
 }

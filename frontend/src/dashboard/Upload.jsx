@@ -4,43 +4,48 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
 
 const Upload = () => {
-  const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
+  const [file, setFile] = useState(null);  // store selected file
+  const [uploading, setUploading] = useState(false); // track if upload is in progress
   const navigate = useNavigate();
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e) => { //handle file input change
     setFile(e.target.files[0]);
   };
 
-  const handleUpload = async (e) => {
+  const handleUpload = async (e) => { // Handle form submission for file upload
     e.preventDefault();
-    if (!file) return;
+
+    if (!file) return; // If no file is selected, do nothing
   
     const token = localStorage.getItem("token");
-    const formData = new FormData();
+    const formData = new FormData(); // Create form data to send file
     formData.append("image", file);
   
     setUploading(true);
     try {
+      // Send POST request to upload image
       const response = await fetch("http://localhost:5000/api/posts", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, //send token
         },
-        body: formData,
+        body: formData, // Attach form data
       });
-  
+
+      // throw error if upload fails
       if (!response.ok) throw new Error("Failed to upload");
-      navigate("/dashboard");
+      navigate("/dashboard"); // navigate to dashboard
     } catch (error) {
-      alert(error.message);
+      alert(error.message); // show error 
     } finally {
-      setUploading(false);
+      setUploading(false); //stop loading indicator
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-200 to-blue-100">
+      
+      {/* Back button to go to dashboard */}
       <button
         type="button"
         onClick={() => navigate("/dashboard")}
@@ -49,10 +54,12 @@ const Upload = () => {
         ← Back to Dashboard
       </button>
 
+      {/* Upload form */}
       <form
         onSubmit={handleUpload}
         className="w-full max-w-xl p-10 bg-white rounded-xl shadow-md"
       >
+        {/* File upload area */}
         <label
           htmlFor="file-upload"
           className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer hover:bg-gray-100 transition"
@@ -65,6 +72,8 @@ const Upload = () => {
             Maximum file size: 10MB per photo
           </p>
           <p className="text-sm text-gray-500">Upload up to 10 photos at once</p>
+          
+          {/* Hidden file input */}
           <input
             id="file-upload"
             type="file"
@@ -74,6 +83,7 @@ const Upload = () => {
           />
         </label>
 
+          {/* Submit button */}
         <div className="mt-6 text-center">
           <button
             type="submit"

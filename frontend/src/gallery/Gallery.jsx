@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Gallery = () => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [url, setUrl] = useState("");
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
 
+// ===== Gallery COMPONENT =====
+// * provide create gallery with tile, decription, & URL
+const Gallery = () => {
+  const [title, setTitle] = useState(""); //state title input
+  const [description, setDescription] = useState(""); // state decription
+  const [url, setUrl] = useState(""); // URL
+  const [message, setMessage] = useState(""); // display messages
+  const navigate = useNavigate(); // navigating to different routes
+
+
+  // ===== FORM SUBMISSION HANDLER =====
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); //default form submission behavior
   
+    // Gather gallery data to send in API request
     const galleryData = {
       title,
       description,
@@ -18,18 +24,19 @@ const Gallery = () => {
     };
   
     try {
-      const token = localStorage.getItem('token'); // 🔹 Get token from storage
+      const token = localStorage.getItem('token'); // get token from storage
       const response = await fetch("http://localhost:5000/api/gallery/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // 🔹 Add this line
+          "Authorization": `Bearer ${token}`, // add token header
         },
-        body: JSON.stringify(galleryData),
+        body: JSON.stringify(galleryData), // Send gallery data as JSON
       });
   
-      const data = await response.json();
-  
+      const data = await response.json(); // Parse the response
+
+       // Handle response based on success or failure
       if (!response.ok) {
         setMessage(data.message || "Gallery creation failed.");
       } else {
@@ -42,44 +49,10 @@ const Gallery = () => {
     }
   };
 
-
-
-  /*const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const galleryData = {
-      title,
-      description,
-      url,
-    };
-
-    try {
-      const response = await fetch("http://localhost:5000/api/gallery/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(galleryData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setMessage(data.message || "Gallery creation failed.");
-      } else {
-        setMessage("");
-        navigate("/dashboard"); // ✅ redirect after success
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("Something went wrong. Please try again.");
-    }
-  };*/
-
-
-
   return (
     <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-green-200 to-blue-100">
+      
+      {/* Back to Dashboard button */}
       <button
         type="button"
         onClick={() => navigate("/dashboard")}
@@ -88,6 +61,7 @@ const Gallery = () => {
         ← Back to Dashboard
       </button>
 
+      {/* Gallery creation form */}
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-md shadow-md w-full max-w-sm"
@@ -96,10 +70,12 @@ const Gallery = () => {
           Create Event Gallery
         </h2>
 
+         {/* Message for errors or success */}
         {message && (
           <div className="mb-4 text-sm text-center text-red-600">{message}</div>
         )}
 
+        {/* Title input */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Event Title
@@ -113,7 +89,8 @@ const Gallery = () => {
             required
           />
         </div>
-
+        
+        {/* Description input */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Description
@@ -128,6 +105,7 @@ const Gallery = () => {
           />
         </div>
 
+          {/* URL input */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Gallery URL
@@ -142,6 +120,7 @@ const Gallery = () => {
           />
         </div>
 
+          {/* Submit button */}
         <button
           type="submit"
           className="w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-yellow-900 transition"

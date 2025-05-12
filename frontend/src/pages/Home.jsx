@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const [isColored, setIsColored] = useState(false);
+  const [isColored, setIsColored] = useState(false); // Controls grayscale toggle on images
 
+  // Switch between color and grayscale
   const toggleColor = () => {
     setIsColored(prev => !prev);
   };
@@ -16,12 +17,15 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Headline */}
+      {/* Headline Main content */}
       <main className="text-center">
         <h1 className="text-5xl md:text-5xl font-semibold mb-3 text-black">
         SHARE YOUR EVENTS MEMORIES.</h1>
+
+        {/* Subheading */}
          <p className="text-2xl mb-6">Create a unique gallery for your event and let everyone contribute their photos</p>
         
+        {/* Signup button linking to signup route */}
         <Link to="/Signup">
           <button className="border-2 border-black text-black py-2 px-6 rounded-lg font-medium 
           hover:bg-gradient-to-br from-green-100 to-blue-100 hover:text-black transition">
@@ -29,10 +33,10 @@ const Home = () => {
           </button>
         </Link>
 
-        {/* picture Layout */}
+        {/* picture Layout section */}
         <div className="flex flex-col md:flex-row justify-center gap-4 mt-12">
           
-          {/* Left column */}
+          {/* Left column with photo & gif */}
           <div className="flex flex-col gap-4">
             <img src="/images/photo1.jpeg" alt="Side 1"
               className={`w-40 md:w-48 lg:w-52 rounded-lg shadow-md ${
@@ -40,7 +44,7 @@ const Home = () => {
               } hover:grayscale-0 cursor-pointer transition-all`}
               onClick={toggleColor} />
 
-            {/* Left column gif*/}
+            {/* Left column gif */}
             <img src="/video/video1.gif" alt="Side 2"
               className={`w-40 md:w-48 lg:w-52 h-64 rounded-lg shadow-md`}
               onClick={toggleColor} />
@@ -55,7 +59,7 @@ const Home = () => {
               onClick={toggleColor} />
           </div>
 
-          {/* Right column */}
+          {/* Right column with gif & photo*/}
           <div className="flex flex-col gap-4">
             <img src="/images/photo2.jpeg" alt="Side 3"
               className={`w-40 md:w-48 lg:w-52 rounded-lg shadow-md`}

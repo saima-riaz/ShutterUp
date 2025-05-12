@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+// Signup component
 const Signup = () => {
+
+  // form inputs and messages
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -9,10 +12,11 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
 
+   // Handles user signup form submission
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    const username = `${firstName} ${lastName}`;
+    const username = `${firstName} ${lastName}`; // Combine first and last name
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
@@ -20,33 +24,38 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password }), // Send signup data
       });
 
       const data = await response.json();
 
       if (!response.ok) {
+
+        // Display error message from server
         setMessage(data.message || "Signup failed.");
       } else {
+
+        // Show success message
         setMessage(data.message || "Signup successful.");
       }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("Something went wrong. Please try again.");
+      setMessage("Something went wrong. Please try again.");  // Fallback error
     }
   };
-
-  {/* Frontend part */}
 
   return (
     <div className="flex justify-center items-center min-h-screen -mt-8">
       <div className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
+        {/* Page heading */}
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Create your account</h2>
 
+        {/* Message display area */}
         {message && (
           <div className="mb-4 text-sm text-center text-red-600">{message}</div>
         )}
 
+          {/* Signup form */}
         <form onSubmit={handleSignUp}>
           {/* First Name */}
           <div className="mb-4">
@@ -62,7 +71,7 @@ const Signup = () => {
             />
           </div>
 
-          {/* Last Name */}
+          {/* Last Name input*/}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Last name
@@ -76,7 +85,7 @@ const Signup = () => {
             />
           </div>
 
-          {/* Email */}
+          {/* Email input */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email address
@@ -104,7 +113,7 @@ const Signup = () => {
             />
           </div>
 
-          {/* Show Password */}
+          {/* Show Password  checkbox*/}
           <div className="flex justify-start items-center mb-6 text-sm">
             <label className="flex items-center space-x-2 text-gray-600">
               <input
@@ -126,7 +135,7 @@ const Signup = () => {
           </button>
         </form>
 
-        {/* Log in link */}
+        {/* Login redirect link */}
         <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">

@@ -2,34 +2,43 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faBookmark } from '@fortawesome/free-solid-svg-icons';
 import { deletePhoto, API_BASE } from '../../util/photoAPI';
-import { useAuth } from '../../util/AuthContext'; // Add this import
+import { useAuth } from '../../util/AuthContext';
 
+
+// ===== ImageCard COMPONENT =====
+// Provides photo deletion and gallery assignment functionalities
 const ImageCard = ({ photoId, onSuccess, galleries }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isAddingToGallery, setIsAddingToGallery] = useState(false);
-  const [selectedGallery, setSelectedGallery] = useState('');
-  const [error, setError] = useState(null);
-  const { token } = useAuth(); // Get the auth token
 
+
+  const [isDeleting, setIsDeleting] = useState(false); // track delete operation
+  const [isAddingToGallery, setIsAddingToGallery] = useState(false); // track gallery addition
+  const [selectedGallery, setSelectedGallery] = useState(''); // selected gallery
+  const [error, setError] = useState(null); // error msg
+  const { token } = useAuth(); // Get auth token
+
+
+  // ===== DELETE PHOTO =====
   const handleDelete = async (e) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this photo?')) return;
 
     setIsDeleting(true);
     setError(null); // Clear previous errors
+
     try {
-      await deletePhoto(photoId);
-      onSuccess();
+      await deletePhoto(photoId); // call API
+      onSuccess(); //refresh UI
     } catch (err) {
       setError(err.message || 'Failed to delete photo');
     } finally {
-      setIsDeleting(false);
+      setIsDeleting(false); // Reset deleting state
     }
   };
 
+   // ===== ADD PHOTO TO GALLERY =====
   const handleAddToGallery = async (e) => {
     e.stopPropagation();
-    if (!selectedGallery) return;
+    if (!selectedGallery) return; // Exit early if condition is not met
 
     setIsAddingToGallery(true);
     setError(null); // Clear previous errors
@@ -39,9 +48,9 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Add authorization header
+          'Authorization': `Bearer ${token}` // Add auth header
         },
-        body: JSON.stringify({ photoId })
+        body: JSON.stringify({ photoId }) // send photo ID
       });
 
       if (!response.ok) {
@@ -50,11 +59,11 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
       }
 
       alert('Added to gallery successfully!');
-      onSuccess();
+      onSuccess(); // callback to refresh UI
     } catch (err) {
       setError(err.message);
     } finally {
-      setIsAddingToGallery(false);
+      setIsAddingToGallery(false); // Reset state
     }
   };
 
@@ -63,7 +72,7 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
       className="absolute top-2 right-2 space-y-2"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Gallery selector */}
+      {/* Gallery selector Dropdown and button to add photo to gallery */}
       {galleries?.length > 0 && (
         <div className="flex gap-1 bg-white bg-opacity-70 p-1 rounded">
           <select 
@@ -91,7 +100,7 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
         </div>
       )}
 
-      {/* Delete button */}
+      {/* Delete button to photo */}
       <button
         onClick={handleDelete}
         disabled={isDeleting}
@@ -102,7 +111,7 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
         {isDeleting && <span className="ml-1">...</span>}
       </button>
 
-      {/* Error message */}
+      {/* display error message */}
       {error && (
         <div className="absolute top-full right-0 mt-1 bg-red-100 text-red-800 text-xs p-1 rounded max-w-xs">
           {error}
