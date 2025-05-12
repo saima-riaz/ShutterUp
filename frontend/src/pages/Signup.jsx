@@ -52,7 +52,7 @@ const Signup = () => {
 
         {/* Message display area */}
         {message && (
-          <div className="mb-4 text-sm text-center text-red-600">{message}</div>
+          <div className="mb-4 text-sm text-center text-blue-600">{message}</div>
         )}
 
           {/* Signup form */}

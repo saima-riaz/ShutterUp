@@ -18,11 +18,11 @@ const Home = () => {
       </header>
 
       {/* Headline Main content */}
-      <main className="text-center">
+      <main className="text-center ">
         <h1 className="text-5xl md:text-5xl font-semibold mb-3 text-black">
         SHARE YOUR EVENTS MEMORIES.</h1>
 
-        {/* Subheading */}
+        {/* Sub heading */}
          <p className="text-2xl mb-6">Create a unique gallery for your event and let everyone contribute their photos</p>
         
         {/* Signup button linking to signup route */}
@@ -35,42 +35,59 @@ const Home = () => {
 
         {/* picture Layout section */}
         <div className="flex flex-col md:flex-row justify-center gap-4 mt-12">
-          
-          {/* Left column with photo & gif */}
-          <div className="flex flex-col gap-4">
-            <img src="/images/photo1.jpeg" alt="Side 1"
-              className={`w-40 md:w-48 lg:w-52 rounded-lg shadow-md ${
-                isColored ? "" : "grayscale"
-              } hover:grayscale-0 cursor-pointer transition-all`}
-              onClick={toggleColor} />
+        
+        {/* Left column */}
+        <div className="flex flex-col space-y-4">
+          <img src="/images/photo1.jpg" alt="Side 1"
+            className={`w-40 md:w-48 lg:w-52 rounded-lg shadow-xs ${
+              isColored ? "" : "color"
+          } hover:grayscale-0 cursor-pointer transition-all`} 
+          onClick={toggleColor} />
 
-            {/* Left column gif */}
-            <img src="/video/video1.gif" alt="Side 2"
-              className={`w-40 md:w-48 lg:w-52 h-64 rounded-lg shadow-md`}
-              onClick={toggleColor} />
+          <img src="/video/video1.gif" alt="Side 2"
+            className="w-40 md:w-48 lg:w-52 h-68 rounded-lg shadow-md h-full"
+            onClick={toggleColor} />
           </div>
 
-          {/* Center image */}
-          <div>
-            <img src="/images/photo3.jpg" alt="Main"
-              className={`w-full max-w-xs rounded-lg shadow-lg ${
-                isColored ? "" : "grayscale"
-              } hover:grayscale-0 cursor-pointer transition-all`}
-              onClick={toggleColor} />
-          </div>
+  {/* Center grid with fixed width */}
+  <div className="grid grid-cols-2 gap-4 justify-items-center ">
+    <img src="/images/photo3.jpg" alt="top 1"
+      className={`w-full max-w-xs rounded-lg shadow-lg ${
+        isColored ? "" : ""
+      } hover:grayscale-0 cursor-pointer transition-all`} 
+      onClick={toggleColor} />
 
-          {/* Right column with gif & photo*/}
-          <div className="flex flex-col gap-4">
-            <img src="/images/photo2.jpeg" alt="Side 3"
-              className={`w-40 md:w-48 lg:w-52 rounded-lg shadow-md`}
-              onClick={toggleColor} />
+    <img src="/images/photo4.jpg" alt="top 2"
+      className={`w-full max-w-xs rounded-lg shadow-lg ${
+        isColored ? "" : "color"
+      } hover:grayscale-0 cursor-pointer transition-all`}
+      onClick={toggleColor} />
 
-            {/* Right column gif*/}
-            <img src="/video/video2.gif" alt="Side 4"
-              className={`w-40 md:w-48 lg:w-52 h-64 rounded-lg shadow-md`}
-              onClick={toggleColor} />
-          </div>
-        </div>
+    <img src="/images/photo5.jpg" alt="Bottom 1"
+      className={`w-full max-w-xs rounded-lg shadow-lg ${
+        isColored ? "" : "color"
+      } hover:grayscale-0 cursor-pointer transition-all`}
+      onClick={toggleColor} />
+
+    <img src="/images/photo6.jpg" alt="Bottom 2"
+      className={`w-full max-w-xs rounded-lg shadow-lg ${
+        isColored ? "" : "grayscale"
+      } hover:grayscale-0 cursor-pointer transition-all`}
+      onClick={toggleColor} />
+  </div>
+
+  {/* Right column */}
+  <div className="flex flex-col space-y-4 ">
+    <img src="/images/photo2.jpeg" alt="Side 3"
+      className="w-40 md:w-48 lg:w-52 rounded-lg shadow-xs h-full"
+      onClick={toggleColor} />
+
+    <img src="/video/video2.gif" alt="Side 4"
+      className="w-40 md:w-48 lg:w-52 h-64 rounded-lg shadow-md"
+      onClick={toggleColor} />
+  </div>
+</div>
+
       </main>
     </div>
   );

@@ -51,7 +51,7 @@ const Navbar = () => {
         
       {/* Logo section with camera icon and brand name */}
 
-        <div className="flex items-center -ml-9">
+        <div className="flex items-center -ml-2">
           <FontAwesomeIcon icon={faCamera} className="text-3xl mr-2" />
           <span className="text-5xl font-lavish">ShutterUp</span>
         </div>
