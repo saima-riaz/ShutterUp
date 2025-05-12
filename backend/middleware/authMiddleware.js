@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
     }
 
      // Verify token + check expiry
-     const decoded = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: false }); // ✅ Force expiry check
+     const decoded = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: false });
     
     // find user by id & attach to request
     const user = await User.findById(decoded.id).select('-password');
