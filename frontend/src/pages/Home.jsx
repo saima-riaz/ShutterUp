@@ -2,12 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const [isColored, setIsColored] = useState(false); // Controls grayscale toggle on images
-
-  // Switch between color and grayscale
-  const toggleColor = () => {
-    setIsColored(prev => !prev);
-  };
 
   return (
     <div className="min-h-screen px-6 py-4">
@@ -19,11 +13,12 @@ const Home = () => {
 
       {/* Headline Main content */}
       <main className="text-center ">
-        <h1 className="text-5xl md:text-5xl font-semibold mb-3 text-black">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 text-black">
         SHARE YOUR EVENTS MEMORIES.</h1>
 
         {/* Sub heading */}
-         <p className="text-2xl mb-6">Create a unique gallery for your event and let everyone contribute their photos</p>
+         <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-6">
+          Create a unique gallery for your event and let everyone contribute their photos</p>
         
         {/* Signup button linking to signup route */}
         <Link to="/Signup">
@@ -33,58 +28,44 @@ const Home = () => {
           </button>
         </Link>
 
-        {/* picture Layout section */}
-        <div className="flex flex-col md:flex-row justify-center gap-4 mt-12">
+
+        {/* --- picture Layout section --- */}
+        <div className="flex flex-col md:flex-row justify-center gap-4 mt-12 px-2 md:px-6">
         
-        {/* Left column */}
+        {/* ----- Left column ----- */}
         <div className="flex flex-col space-y-4">
           <img src="/images/photo1.jpg" alt="Side 1"
-            className={`w-40 md:w-48 lg:w-52 rounded-lg shadow-xs ${
-              isColored ? "" : "color"
-          } hover:grayscale-0 cursor-pointer transition-all`} 
-          onClick={toggleColor} />
+            className="w-40 md:w-48 lg:w-52 h-auto object-contain rounded-lg shadow-md hover:grayscale cursor-pointer transition-all"
+            />
+           
+           <img src="/images/photo7.jpg" alt="Side 1"
+            className="w-40 md:w-48 lg:w-52 rounded-lg shadow-xs h-full hover:grayscale cursor-pointer transition-all" />
 
-          <img src="/video/video1.gif" alt="Side 2"
-            className="w-40 md:w-48 lg:w-52 h-68 rounded-lg shadow-md h-full"
-            onClick={toggleColor} />
           </div>
 
-  {/* Center grid with fixed width */}
+  {/* ---- Center grid with fixed width ---- */}
   <div className="grid grid-cols-2 gap-4 justify-items-center ">
     <img src="/images/photo3.jpg" alt="top 1"
-      className={`w-full max-w-xs rounded-lg shadow-lg ${
-        isColored ? "" : ""
-      } hover:grayscale-0 cursor-pointer transition-all`} 
-      onClick={toggleColor} />
+      className="w-full max-w-xs rounded-lg shadow-lg hover:grayscale cursor-pointer transition-all" />
+
 
     <img src="/images/photo4.jpg" alt="top 2"
-      className={`w-full max-w-xs rounded-lg shadow-lg ${
-        isColored ? "" : "color"
-      } hover:grayscale-0 cursor-pointer transition-all`}
-      onClick={toggleColor} />
+      className="w-full max-w-xs rounded-lg shadow-lg hover:grayscale cursor-pointer transition-all" />
 
     <img src="/images/photo5.jpg" alt="Bottom 1"
-      className={`w-full max-w-xs rounded-lg shadow-lg ${
-        isColored ? "" : "color"
-      } hover:grayscale-0 cursor-pointer transition-all`}
-      onClick={toggleColor} />
+      className="w-full max-w-xs rounded-lg shadow-lg  hover:grayscale cursor-pointer transition-all"/>
 
     <img src="/images/photo6.jpg" alt="Bottom 2"
-      className={`w-full max-w-xs rounded-lg shadow-lg ${
-        isColored ? "" : "grayscale"
-      } hover:grayscale-0 cursor-pointer transition-all`}
-      onClick={toggleColor} />
+      className="w-full max-w-xs rounded-lg shadow-lg hover:grayscale cursor-pointer transition-all" />
   </div>
 
-  {/* Right column */}
+  {/* --- Right column --- */}
   <div className="flex flex-col space-y-4 ">
     <img src="/images/photo2.jpeg" alt="Side 3"
-      className="w-40 md:w-48 lg:w-52 rounded-lg shadow-xs h-full"
-      onClick={toggleColor} />
+      className="w-40 md:w-48 lg:w-52 rounded-lg shadow-xs h-full hover:grayscale cursor-pointer transition-all" />
 
     <img src="/video/video2.gif" alt="Side 4"
-      className="w-40 md:w-48 lg:w-52 h-64 rounded-lg shadow-md"
-      onClick={toggleColor} />
+      className="w-40 md:w-48 lg:w-52 max-h-64 rounded-lg shadow-md hover:grayscale cursor-pointer transition-all"/>
   </div>
 </div>
 
