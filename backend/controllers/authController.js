@@ -71,7 +71,7 @@ exports.register = async (req, res) => {
 
     // Send response with token and user info (appear on signup form)
     res.status(201).json({ 
-      message: "Login successful!",
+      message: " Verification sent, please verify your mail",
       token,
       user
     });
