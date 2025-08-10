@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react'; // manage var in react compon
+import { Link } from 'react-router-dom'; //navigate
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCamera } from "@fortawesome/free-solid-svg-icons";
 
@@ -49,7 +49,7 @@ const Navbar = () => {
     <nav className="text-black p-2">
       <div className="container mx-auto flex flex-wrap justify-between items-center">
         
-      {/* Logo section with camera icon and brand name */}
+      {/* Logo section with camera icon & name (shutterup) */}
 
         <div className="flex items-center -ml-2">
           <FontAwesomeIcon icon={faCamera} className="text-3xl mr-2" />
