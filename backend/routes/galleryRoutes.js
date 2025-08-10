@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+const express = require("express"); // express library
+const router = express.Router(); // Create router to define routes
 const galleryController = require("../controllers/galleryController");
 const authMiddleware = require("../middleware/authMiddleware");
 

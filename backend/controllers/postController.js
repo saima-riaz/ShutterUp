@@ -45,9 +45,9 @@ exports.getPosts = async (req, res) => {
 };
 
 // delete photo and its image from Cloudinary
-
 exports.deletePost = async (req, res) => {
   try {
+    
     // Find post and ensure its belongs to the user
     const post = await Post.findOneAndDelete({
       _id: req.params.id,

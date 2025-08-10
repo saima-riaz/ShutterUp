@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+const express = require("express"); // libraey
+const router = express.Router(); // Create router to define routes
 const postController = require("../controllers/postController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -7,10 +7,11 @@ const authMiddleware = require("../middleware/authMiddleware");
 router.post("/", authMiddleware, postController.createPost);
 
 // GET route for fetching posts
-router.get("/", authMiddleware, postController.getPosts);
+router.get("/", authMiddleware, postController.getPosts);  
 
 // route to delete photo by ID
 router.delete('/:id', authMiddleware, postController.deletePost);
+
 
 // router to be used in the main app
 module.exports = router;
