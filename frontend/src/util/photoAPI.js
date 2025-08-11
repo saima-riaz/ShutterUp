@@ -48,6 +48,22 @@ export const fetchGalleryByUrl = async (authFetch, url) => {
   return await response.json();
 };
 
+/* ===== CREATE GALLERY ===== */
+export const createGallery = async (authFetch, galleryData) => {
+  const response = await authFetch(`/gallery/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(galleryData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to create gallery");
+  }
+  return await response.json();
+};
+
+
 /* ===== DELETE GALLERY ===== */
 export const deleteGallery = async (authFetch, galleryId) => {
   const response = await authFetch(`/gallery/${galleryId}`, { method: "DELETE" });
