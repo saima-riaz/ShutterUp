@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
 
 dotenv.config();
 
@@ -19,6 +20,11 @@ app.use(cors({
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(console.error);
+
+  app.use(fileUpload({
+    useTempFiles: false, // We are not using disk storage
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max file size
+  }));
 
   app.use("/api/auth", require("./routes/authRoutes"));
   app.use("/api/posts", require("./routes/postRoutes"));
