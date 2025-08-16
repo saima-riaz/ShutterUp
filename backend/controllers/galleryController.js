@@ -81,7 +81,6 @@ exports.deleteGallery = async (req, res) => {
       });
     }
     
-    console.log(`Gallery deleted: ${gallery._id}`);
     res.status(200).json({ 
       success: true, 
       message: "Gallery deleted successfully" 
@@ -105,7 +104,6 @@ exports.addPhotoToGallery = async (req, res) => {
     });
 // find the gallery by URL
     if (!gallery) {
-      console.log(`Gallery not found: ${req.params.url}`);
       return res.status(404).json({ message: "Gallery not found" });
     }
     
@@ -113,7 +111,7 @@ exports.addPhotoToGallery = async (req, res) => {
     if (!gallery.photos.includes(photoId)) {
       gallery.photos.push(photoId);
       await gallery.save();
-      console.log(`Photo ${photoId} added to gallery ${gallery._id}`);
+  
     }
 
     res.status(200).json({ success: true, gallery });
