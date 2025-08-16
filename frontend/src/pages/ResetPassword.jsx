@@ -85,7 +85,7 @@ const ResetPassword = () => {
             <button
               onClick={updatePassword}
               disabled={loading || !newPassword}
-              className="bg-green-500 text-white px-4 py-2 rounded w-full disabled:opacity-70"
+              className="bg-blue-600 text-white px-4 py-2 rounded w-full disabled:opacity-70"
             >
               {loading ? "Updating..." : "Update Password"}
             </button>
