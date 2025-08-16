@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Home = () => {
 
   return (
-    <div className="min-h-screen px-6 py-4">
+    <div className="min-h-screen px-6 py-4 bg-gradient-to-b from-teal-200 to-blue-300">
       {/* Header */}
       <header className="flex justify-between items-center mb-12">
         <div className="flex items-center space-x-2">

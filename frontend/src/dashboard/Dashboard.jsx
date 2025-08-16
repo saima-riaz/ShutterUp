@@ -83,7 +83,7 @@ const Dashboard = () => {
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (
-    <div className="flex min-h-screen font-sans bg-gradient-to-br from-green-200 to-blue-100">
+    <div className="flex min-h-screen font-sans bg-gradient-to-b from-teal-200 to-blue-300">
       <Sidebar
         onLogout={logout}
         onUpload={() => navigate("/upload")}

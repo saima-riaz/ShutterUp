@@ -52,7 +52,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen -mt-16">
+    <div className="flex justify-center items-center min-h-screen -mt-16 bg-gradient-to-b from-teal-200 to-blue-300">
       <div className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
         <div className="flex justify-center mb-6">
           <FontAwesomeIcon icon={faCamera} className="text-3xl mr-2 m-4" />
@@ -121,7 +121,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-green-800 transition ${
+            className={`bg-blue-500 text-white px-4 py-2 rounded w-full disabled:opacity-70 ${
               loading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
@@ -133,6 +133,12 @@ const Login = () => {
           Don't have an account?{" "}
           <Link to="/signup" className="text-blue-600 hover:underline">
             Sign up
+          </Link>
+        </p>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Reset your password{" "}
+          <Link to="/reset-password" className="text-blue-600 hover:underline">
+            Forgot Password
           </Link>
         </p>
       </div>

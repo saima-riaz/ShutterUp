@@ -47,11 +47,11 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     (async () => {
-      await refreshAccessToken();
+      await refreshAccessToken(); // try to refresh on page load
       setLoading(false);
     })();
   }, []);
-
+  
   // fetch wrapper: sends cookies, no auth header needed, adds /api prefix if missing
   const authFetch = (url, options = {}) => {
     const apiUrl = url.startsWith("/api") ? url : `/api${url}`;

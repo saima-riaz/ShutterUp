@@ -25,7 +25,7 @@ const Gallery = () => {
   };
 
   return (
-    <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-green-200 to-blue-100">
+    <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-b from-teal-200 to-blue-200">
       {/* Back to Dashboard */}
       <button
         type="button"
