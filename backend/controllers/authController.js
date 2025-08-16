@@ -1,21 +1,29 @@
 const User = require("../models/User");
-const bcrypt = require("bcryptjs"); // for hashing password
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto"); // for generating token
-const nodemailer = require("nodemailer"); 
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
-// Email transporter setup
+// Single email transporter for all emails
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
     user: process.env.EMAIL_USERNAME,
-    pass: process.env.EMAIL_PASSWORD
-  }
+    pass: process.env.EMAIL_PASSWORD,
+  },
 });
 
+const createAccessToken = (userId) =>
+  jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+const createRefreshToken = (userId) =>
+  jwt.sign({ id: userId }, process.env.REFRESH_SECRET, { expiresIn: '7d' });
+
+// Helper: send verification email
 const sendVerificationEmail = async (user, req) => {
   const url = `${req.protocol}://${req.get('host')}/api/auth/verify-email/${user.verificationToken}`;
   await transporter.sendMail({
@@ -25,12 +33,6 @@ const sendVerificationEmail = async (user, req) => {
     html: `<h2>Welcome to ShutterUp!</h2><a href="${url}">Click here to verify</a><p><small>Link expires in 24 hours.</small></p>`
   });
 };
-
-const createAccessToken = (userId) => 
-  jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '15m' });
-
-const createRefreshToken = (userId) => 
-  jwt.sign({ id: userId }, process.env.REFRESH_SECRET, { expiresIn: '7d' });
 
 // Register new user
 exports.register = async (req, res) => {
@@ -67,9 +69,7 @@ exports.verifyEmail = async (req, res) => {
       verificationTokenExpires: { $gt: Date.now() }
     });
 
-    if (!user) {
-      return res.status(400).json({ message: "Invalid or expired token" });
-    }
+    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
 
     user.isVerified = true;
     user.verificationToken = undefined;
@@ -100,22 +100,21 @@ exports.login = async (req, res) => {
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: false,          // Set to true in production with HTTPS
+      secure: false, // true in production
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 15 * 60 * 1000,
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,          // Set to true in production with HTTPS
+      secure: false,
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({
       message: "Login successful",
       user: { _id: user._id, email: user.email, username: user.username }
-      // No accessToken in JSON response since it's in cookie
     });
 
   } catch (err) {
@@ -155,24 +154,6 @@ exports.refreshToken = async (req, res) => {
   }
 };
 
-// Get current user (optional: depends on frontend usage)
-exports.getUser = async (req, res) => {
-  try {
-    // You can also get token from cookie here, or from Authorization header if used
-    const token = req.cookies.accessToken;
-    if (!token) return res.status(401).json({ message: 'No access token' });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select('-password');
-
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    res.status(200).json({ user });
-  } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
-  }
-};
-
 // Logout user
 exports.logout = (req, res) => {
   res.clearCookie('accessToken');
@@ -180,34 +161,21 @@ exports.logout = (req, res) => {
   res.json({ message: 'Logged out successfully' });
 };
 
-
-// 1. Request password reset (send email with reset link)
+// Request password reset
 exports.requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Generate reset token and expiry
     const resetToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
     await user.save();
 
-    // Prepare frontend reset URL
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
-    // Configure email transport
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
-    // Send email
     await transporter.sendMail({
       from: `"ShutterUp" <${process.env.EMAIL_USERNAME}>`,
       to: user.email,
@@ -226,7 +194,7 @@ exports.requestPasswordReset = async (req, res) => {
   }
 };
 
-// 2. Reset password (using token)
+// Reset password using token
 exports.resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
@@ -234,12 +202,11 @@ exports.resetPassword = async (req, res) => {
 
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() }, // token still valid
+      resetPasswordExpires: { $gt: Date.now() },
     });
 
     if (!user) return res.status(400).json({ message: "Invalid or expired token" });
 
-    // Hash new password and clear token fields
     user.password = await bcrypt.hash(password, 10);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
