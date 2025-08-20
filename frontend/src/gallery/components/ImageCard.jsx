@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faBookmark } from '@fortawesome/free-solid-svg-icons';
-import { deletePhoto, API_BASE } from '../../util/photoAPI';
+import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { deletePhoto } from '../../util/photoAPI';
 import { useAuth } from '../../util/AuthContext';
 
 const ImageCard = ({ photoId, onSuccess, galleries }) => {
-  const { authFetch } = useAuth(); // get authFetch from context
+  const { authFetch } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddingToGallery, setIsAddingToGallery] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState('');
@@ -19,7 +19,6 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
     setError(null);
 
     try {
-      // Pass authFetch to deletePhoto so it can do authenticated fetch
       await deletePhoto(authFetch, photoId);
       onSuccess();
     } catch (err) {
@@ -64,7 +63,7 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
           <select
             value={selectedGallery}
             onChange={(e) => setSelectedGallery(e.target.value)}
-            className="text-xs p-1 border rounded"
+            className="text-sm p-1 border rounded"
             disabled={isAddingToGallery}
           >
             <option value="">Add to...</option>
@@ -77,10 +76,10 @@ const ImageCard = ({ photoId, onSuccess, galleries }) => {
           <button
             onClick={handleAddToGallery}
             disabled={!selectedGallery || isAddingToGallery}
-            className="text-blue-600 hover:text-blue-800 disabled:opacity-50"
+            className="text-black hover:text-blue-800 disabled:opacity-80"
             title="Add to gallery"
           >
-            <FontAwesomeIcon icon={faBookmark} size="xs" />
+            <FontAwesomeIcon icon={faPlus} size="md" />
             {isAddingToGallery && '...'}
           </button>
         </div>
