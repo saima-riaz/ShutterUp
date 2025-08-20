@@ -1,37 +1,51 @@
 const Gallery = require('../models/Gallery');
+const { v4: uuidv4 } = require("uuid");
 
-// create new gallery
+// helper: slugify title → url-friendly string
+const slugify = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-") // replace spaces/symbols → "-"
+    .replace(/(^-|-$)+/g, ""); // trim "-" from ends
+
+// =======================
+// Create new gallery
+// =======================
 exports.createGallery = async (req, res) => {
   try {
-    const { title, description, url } = req.body;
+    const { title, description } = req.body;
 
     // validate required fields
-    if (!title || !description || !url) {
-      return res.status(400).json({ message: "Title, description, and URL are required" });
+    if (!title || !description) {
+      return res.status(400).json({ message: "Title and description are required" });
     }
 
- // check if a gallery with the same URL already exists
-    const existingGallery = await Gallery.findOne({ url });
+    // Check if the user already has a gallery with the same title
+    const existingGallery = await Gallery.findOne({ title, user: req.user.id });
     if (existingGallery) {
-      return res.status(400).json({ message: "Gallery URL already exists" });
+      return res.status(400).json({ message: "You already have a gallery with this title." });
     }
+
+    // auto-generate clean unique URL
+    const generatedUrl = `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${uuidv4().slice(0, 6)}`;
 
     // create and save the new gallery
     const gallery = await Gallery.create({ 
       title, 
       description, 
-      url, 
+      url: generatedUrl,
       user: req.user.id 
     });
-    
+
     res.status(201).json(gallery);
   } catch (error) {
     console.error("Create gallery error:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
-
-// fetch all galleries for current user
+// =======================
+// Fetch all galleries
+// =======================
 exports.getGalleries = async (req, res) => {
   try {
     const galleries = await Gallery.find({ user: req.user.id })
@@ -44,8 +58,9 @@ exports.getGalleries = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch galleries" });
   }
 };
-
-// fetch single gallery by URL for current user 
+// =======================
+// Fetch single gallery by URL
+// =======================
 exports.getGalleryByUrl = async (req, res) => {
   try {
     const gallery = await Gallery.findOne({ 
