@@ -55,11 +55,13 @@ const GalleryDetail = () => {
       </div>
 
       {selectedPhoto && (
-        <PhotoModal
-          photo={selectedPhoto}
-          onClose={() => setSelectedPhoto(null)}
-        />
-      )}
+  <PhotoModal
+    photos={gallery.photos} // pass all photos
+    currentIndex={gallery.photos.findIndex(p => p._id === selectedPhoto._id)} // current photo index
+    photo={selectedPhoto} // optional, used internally
+    onClose={() => setSelectedPhoto(null)}
+  />
+)}
     </div>
   );
 };

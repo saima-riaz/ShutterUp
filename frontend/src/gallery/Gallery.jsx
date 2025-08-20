@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../util/AuthContext";
-import { createGallery } from "../util/photoAPI"; // Centralized API call
+import { createGallery } from "../util/photoAPI";
 
 const Gallery = () => {
   const { authFetch } = useAuth();
@@ -9,7 +9,6 @@ const Gallery = () => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [url, setUrl] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
@@ -17,9 +16,10 @@ const Gallery = () => {
     setMessage("");
 
     try {
-      await createGallery(authFetch, { title, description, url });
+      await createGallery(authFetch, { title, description });
       navigate("/dashboard");
     } catch (err) {
+      // Display backend error messages (like duplicate gallery) to user
       setMessage(err.message || "Gallery creation failed.");
     }
   };
@@ -41,7 +41,7 @@ const Gallery = () => {
         className="bg-white p-8 rounded-md shadow-md w-full max-w-sm"
       >
         <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          Create Event Gallery
+          Create Event Album
         </h2>
 
         {message && (
@@ -78,27 +78,12 @@ const Gallery = () => {
           />
         </div>
 
-        {/* URL */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Gallery URL
-          </label>
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="summer-wedding-2024"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
-            required
-          />
-        </div>
-
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-yellow-900 transition"
+          className="w-full bg-blue-400 text-white py-2 rounded-md font-semibold hover:bg-yellow-900 transition"
         >
-          Create Gallery
+          Click here
         </button>
       </form>
     </div>
