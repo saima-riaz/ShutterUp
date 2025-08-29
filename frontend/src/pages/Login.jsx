@@ -52,8 +52,8 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen -mt-16 bg-gradient-to-b from-teal-200 to-blue-300">
-      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="bg-white p-8 rounded-md w-full max-w-sm">
         <div className="flex justify-center mb-6">
           <FontAwesomeIcon icon={faCamera} className="text-3xl mr-2 m-4" />
         </div>

@@ -45,8 +45,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen -mt-8 bg-gradient-to-b from-teal-200 to-blue-300">
-      <div className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
+    <div className="flex justify-center items-center min-h-screen mt-4 bg-gradient-to-b  to-blue-300">
+      <div className="bg-white p-8 w-full max-w-sm">
         {/* Page heading */}
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Create your account</h2>
 
