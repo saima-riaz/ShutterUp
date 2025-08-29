@@ -38,7 +38,7 @@ const Gallery = () => {
       {/* Gallery form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-md shadow-md w-full max-w-sm"
+        className="bg-white p-8 rounded-md w-full max-w-sm"
       >
         <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
           Create Event Album
