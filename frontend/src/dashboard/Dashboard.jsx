@@ -7,6 +7,7 @@ import PhotoGrid from "./components/PhotoGrid";
 import PhotoModal from "./components/PhotoModal";
 import GalleryCard from "../gallery/components/GalleryCard";
 
+
 const Dashboard = () => {
   const { user, logout, loading, authFetch } = useAuth();
   const [photos, setPhotos] = useState([]);
