@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(console.error);
 
   app.use(fileUpload({
-    useTempFiles: false, // We are not using disk storage
+    useTempFiles: false, // not using disk storage
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max file size
   }));
 
