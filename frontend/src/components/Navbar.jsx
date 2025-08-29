@@ -1,37 +1,42 @@
-import { useState } from 'react'; // manage var in react compon
-import { Link } from 'react-router-dom'; //navigate
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faCamera } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faCamera, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Component for navigation links used in both desktop and mobile menus
 const NavLinks = ({ isMobile = false, onLinkClick }) => (
   <>
-
-  {/*** / Link to Features page** ***/}
     <Link
       to="/"
-      className={`${isMobile ? 'hover:text-yellow-800 py-2' : 'hover:text-yellow-900 flex items-center gap-2'}`}
+      className={`${
+        isMobile
+          ? "w-full py-3 text-lg text-center rounded-lg hover:bg-gray-100 transition"
+          : "hover:text-teal-600 font-medium"
+      }`}
       onClick={onLinkClick}
     >
       Features
     </Link>
 
-{/* Link to Signup page */}
     <Link
       to="/signup"
-      className={`${isMobile ? 'hover:text-yellow-800 py-2' : 'hover:text-yellow-900 flex items-center gap-2'}`}
+      className={`${
+        isMobile
+          ? "w-full py-3 text-lg text-center rounded-lg hover:bg-gray-100 transition"
+          : "hover:text-teal-600 font-medium"
+      }`}
       onClick={onLinkClick}
     >
       Signup
     </Link>
 
-{/* Link to Login page with different styling on desktop */}
-
     <Link
       to="/login"
-      className={`${isMobile
-        ? 'hover:text-yellow-800 py-2'
-        : 'bg-gradient-to-br from-green-100 to-blue-100 text-black py-2 px-6 rounded-lg font-medium hover:text-black transition'
+      className={`${
+        isMobile
+          ? "w-full py-3 text-lg text-white text-center rounded-lg bg-gradient-to-r from-teal-400 to-blue-500 hover:opacity-90 transition"
+          : "bg-gradient-to-r from-teal-400 to-blue-500 text-white py-2 px-6 rounded-lg font-medium shadow-md hover:shadow-lg hover:opacity-90 transition"
       }`}
       onClick={onLinkClick}
     >
@@ -41,44 +46,69 @@ const NavLinks = ({ isMobile = false, onLinkClick }) => (
 );
 
 const Navbar = () => {
-
-  // State to track if the mobile menu is open or not
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Listen for scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20); // toggle after 20px
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="text-black p-2">
-      <div className="container mx-auto flex flex-wrap justify-between items-center">
-        
-      {/* Logo section with camera icon & name (shutterup) */}
-
-        <div className="flex items-center -ml-2">
-          <FontAwesomeIcon icon={faCamera} className="text-3xl mr-2" />
-          <span className="text-5xl font-lavish">ShutterUp</span>
+    <motion.nav
+      initial={false}
+      animate={{
+        backgroundColor: isScrolled ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.6)",
+        boxShadow: isScrolled ? "0 2px 10px rgba(0,0,0,0.1)" : "0 0px 0px rgba(0,0,0,0)",
+        height: isScrolled ? "70px" : "50px",
+      }}
+      transition={{ duration: 0.3 }}
+      className="fixed w-full top-0 z-50 backdrop-blur-md"
+    >
+      <div className="container mx-auto flex justify-between items-center px-4 h-full">
+        {/* Logo */}
+        <div className="flex items-center cursor-pointer">
+          <FontAwesomeIcon icon={faCamera} className="text-3xl text-teal-600 mr-2" />
+          <span className="text-3xl font-bold text-gray-900 tracking-tight">
+            Shutter<span className="text-teal-600">Up</span>
+          </span>
         </div>
 
-        {/* Menu toggle button for mobile view */}
-        <button 
-          className="md:hidden p-2"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <FontAwesomeIcon icon={faBars} size="lg" />
-        </button>
-
-        {/* Desktop navigation menu (visible on medium and larger screens) */}
-        <div className="hidden md:flex items-center space-x-6 text-1xl">
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center space-x-8 text-gray-700 text-lg">
           <NavLinks />
         </div>
+
+        {/* Mobile menu toggle */}
+        <button
+          className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <FontAwesomeIcon icon={isMobileMenuOpen ? faXmark : faBars} size="lg" />
+        </button>
       </div>
 
-      {/* Mobile navigation menu (visible when menu is open)*/}
-      {isMobileMenuOpen && (
-        <div className="md:hidden mt-4">
-          <div className="flex flex-col space-y-3">
-            <NavLinks isMobile={true} onLinkClick={() => setIsMobileMenuOpen(false)} />
-          </div>
-        </div>
-      )}
-    </nav>
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-white shadow-lg px-6 py-6"
+          >
+            <div className="flex flex-col space-y-4 text-gray-700 text-lg">
+              <NavLinks isMobile={true} onLinkClick={() => setIsMobileMenuOpen(false)} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 };
 
