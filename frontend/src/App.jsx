@@ -10,20 +10,29 @@ import Upload from './dashboard/Upload';
 import Gallery from "./gallery/Gallery"; 
 import GalleryDetail from "./gallery/GalleryDetail";
 import ResetPassword from './pages/ResetPassword'; 
+import Notifications from "./notification/Notifications.jsx";
+import SharedGalleryPrompt from "./notification/SharedGalleryPrompt";
+import SharedGalleryView from "./notification/SharedGalleryView";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* ✅ Public routes */}
+          {/* ===================== PUBLIC ROUTES ===================== */}
           <Route path="/" element={<><Navbar /><Home /></>} />
           <Route path="/signup" element={<><Navbar /><Signup /></>} />
           <Route path="/login" element={<><Navbar /><Login /></>} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-          {/* ✅ Protected routes */}
+          {/* Shared gallery email flow */}
+          <Route path="/shared/:token" element={<SharedGalleryPrompt />} />
+          <Route path="/shared/:token/view" element={<SharedGalleryView />} />
+
+          <Route path="/notifications" element={<Notifications />} />
+
+          {/* ===================== PROTECTED ROUTES ===================== */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<Upload />} />
