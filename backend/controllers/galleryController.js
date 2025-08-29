@@ -137,18 +137,25 @@ exports.unshareGallery = async (req, res) => {
 // =======================
 exports.getSharedGallery = async (req, res) => {
   try {
-    const gallery = await Gallery.findOne({ shareToken: req.params.token, isShared: true }).populate("photos");
-    if (!gallery) return res.status(404).json({ message: "Shared gallery not found" });
+    const gallery = await Gallery.findOne({
+      shareToken: req.params.token,
+      isShared: true
+    }).populate("photos");
 
-    // Create a notification for the gallery owner
+    if (!gallery) {
+      return res.status(404).json({ message: "Shared gallery not found" });
+    }
+
+    // Create a notification every time the shared gallery is accessed
     await Notification.create({
-      user: gallery.user,
+      user: gallery.user,          // gallery owner
       message: `Your gallery "${gallery.title}" was viewed.`,
-      viewerEmail: req.query.email || null,
+      viewerEmail: req.query.email || null // optional
     });
 
     res.status(200).json(gallery);
-  } catch {
+  } catch (error) {
+    console.error("Get shared gallery error:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
