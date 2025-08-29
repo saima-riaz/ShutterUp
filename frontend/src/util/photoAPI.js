@@ -74,3 +74,35 @@ export const deleteGallery = async (authFetch, galleryId) => {
   }
   return await response.json();
 };
+
+/* ===== SHARE GALLERY ===== */
+export const shareGallery = async (authFetch, galleryId) => {
+  const response = await authFetch(`/gallery/${galleryId}/share`, { method: "POST" });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to share gallery");
+  }
+  return await response.json(); // { shareUrl: "http://..." }
+};
+
+/* ===== UNSHARE GALLERY ===== */
+export const unshareGallery = async (authFetch, galleryId) => {
+  const response = await authFetch(`/gallery/${galleryId}/unshare`, { method: "POST" });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to unshare gallery");
+  }
+  return await response.json();
+};
+
+/* ===== SHARE USER NOTIFICATION ===== */
+export const fetchNotifications = async (authFetch) => {
+  const response = await authFetch("/gallery/notifications", { method: "GET" });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to fetch notifications");
+  }
+  return await response.json();
+};
