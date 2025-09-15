@@ -1,41 +1,53 @@
-import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faUpload, faBell } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../util/AuthContext";
 
 const Sidebar = ({ onLogout, onUpload }) => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]);
+  const { authFetch, user } = useAuth();
+  const [notifCount, setNotifCount] = useState(0);
 
-  // Fetch notifications periodically (every 5s) for real-time updates
+  // Fetch notifications count
+  const loadNotifications = async () => {
+    try {
+      const res = await authFetch("/gallery/notifications", { method: "GET" });
+      if (!res.ok) throw new Error("Failed to fetch notifications");
+      const data = await res.json();
+      setNotifCount(data.length);
+    } catch (err) {
+      console.error("Failed to load notifications:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await axios.get(`${API_BASE}/api/gallery/notifications`, {
-          withCredentials: true,
-        });
-        setNotifications(res.data);
-      } catch (err) {
-        console.error("Error fetching notifications", err);
-      }
-    };
-
-    fetchNotifications(); // initial fetch
-    const intervalId = setInterval(fetchNotifications, 5000); // fetch every 5s
-
-    return () => clearInterval(intervalId); // cleanup on unmount
+    loadNotifications();
+    const interval = setInterval(loadNotifications, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <aside className="w-64 bg-white p-6 rounded-tr-3xl rounded-br-3xl shadow-md">
-      <div className="flex items-center gap-2 mb-10">
-        <FontAwesomeIcon icon={faCamera} className="text-3xl" />
-        <h1 className="text-2xl font-bold text-gray-800">ShutterUp</h1>
+      {/* Logo/User section */}
+      <div className="flex items-center gap-3 mb-10 cursor-pointer" onClick={() => navigate('/profile')}>
+        <img
+          src={user?.profilePic || "/default-avatar.png"}
+          alt="User Avatar"
+          className="w-10 h-10 rounded-full object-cover border"
+        />
+        <div>
+          <h1 className="text-lg font-bold text-gray-800">
+            {user?.firstName || user?.username || "ShutterUp"}
+            {user?.lastName ? ` ${user.lastName}` : ""}
+          </h1>
+          <p className="text-sm text-gray-500">
+            {user?.username && !user?.firstName ? `@${user.username}` : "Welcome"}
+          </p>
+        </div>
       </div>
 
+      {/* Nav buttons */}
       <nav className="flex flex-col gap-4 text-gray-700 font-medium">
         <button 
           onClick={() => navigate('/')} 
@@ -65,18 +77,15 @@ const Sidebar = ({ onLogout, onUpload }) => {
         {/* Notifications with badge */}
         <button
           onClick={() => navigate('/notifications')}
-          className="relative flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg"
+          className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg relative"
         >
-          🔔 Notifications
-          {notifications.length > 0 && (
-            <span className="absolute right-4 top-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-              {notifications.length}
+          <FontAwesomeIcon icon={faBell} />
+          Notifications
+          {notifCount > 0 && (
+            <span className="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              {notifCount}
             </span>
           )}
-        </button>
-
-        <button className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg">
-          👤 Profile
         </button>
 
         <button 
