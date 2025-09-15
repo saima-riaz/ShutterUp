@@ -1,81 +1,57 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../util/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { authFetch, login, user, loading } = useAuth();
-  const [profile, setProfile] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    profilePic: "",
-  });
+  const [profile, setProfile] = useState({firstName: "",lastName: "",email: "",profilePic: "",});
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Initialize profile once user is loaded
   useEffect(() => {
-    if (!loading && user) {
-      setProfile({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        profilePic: user.profilePic || "",
-      });
-    }
+    if (!loading && user) setProfile(user);
   }, [user, loading]);
 
-  // Handle form submit (firstName, lastName, email)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { firstName, lastName, email } = e.target;
-    const body = {};
-    if (firstName.value) body.firstName = firstName.value;
-    if (lastName.value) body.lastName = lastName.value;
-    if (email.value) body.email = email.value;
-
-    try {
-      const res = await authFetch("/user/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) throw new Error("Profile update failed");
-
-      const updated = await res.json();
-      setProfile(updated);
-      login(updated); // update global auth context
-      alert("Profile updated");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update profile");
-    }
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (files?.[0]) uploadAvatar(files[0]);
+    else setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle avatar change immediately
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
+  const uploadAvatar = async (file) => {
+    setProfile((prev) => ({ ...prev, profilePic: URL.createObjectURL(file) }));
     const formData = new FormData();
     formData.append("profilePic", file);
 
     try {
+      const res = await authFetch("/user/profile", { method: "PUT", body: formData });
+      if (!res.ok) throw new Error();
+      const updated = await res.json();
+      login(updated);
+      setProfile((prev) => ({ ...prev, profilePic: updated.profilePic || prev.profilePic }));
+    } catch {
+      alert("Failed to upload avatar");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
       const res = await authFetch("/user/profile", {
         method: "PUT",
-        body: formData, // FormData automatically sets multipart/form-data
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          email: profile.email,
+        }),
       });
-
-      if (!res.ok) throw new Error("Avatar upload failed");
-
+      if (!res.ok) throw new Error();
       const updated = await res.json();
-      setProfile((prev) => ({
-        ...prev,
-        profilePic: updated.profilePic || prev.profilePic,
-      }));
-      login(updated); // update global auth context
-    } catch (err) {
-      console.error(err);
-      alert("Failed to upload avatar");
+      login(updated);
+      alert("Profile updated successfully!");
+    } catch {
+      alert("Failed to update profile");
     }
   };
 
@@ -83,7 +59,9 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-200 to-blue-300 relative">
-      {/* Top-right avatar */}
+      <button onClick={() => navigate("/dashboard")} className="absolute top-6 left-6 text-blue-600 hover:underline">
+        ← Back to Dashboard</button>
+
       <div className="absolute top-4 right-4 cursor-pointer">
         <img
           src={profile.profilePic || "/default-avatar.png"}
@@ -91,44 +69,23 @@ const Profile = () => {
           className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
           onClick={() => fileInputRef.current.click()}
         />
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleAvatarChange}
-        />
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleChange} />
       </div>
 
-      {/* Profile form */}
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded shadow-md"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded shadow-md">
         <h2 className="text-2xl font-bold text-center">Profile</h2>
-        <input
-          name="firstName"
-          placeholder="First Name"
-          defaultValue={profile.firstName}
-          className="border p-2 rounded w-full"
-        />
-        <input
-          name="lastName"
-          placeholder="Last Name"
-          defaultValue={profile.lastName}
-          className="border p-2 rounded w-full"
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          defaultValue={profile.email}
-          className="border p-2 rounded w-full"
-        />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded mt-2"
-        >
+        {["firstName", "lastName", "email"].map((field) => (
+          <input
+            key={field}
+            name={field}
+            type={field === "email" ? "email" : "text"}
+            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+            value={profile[field] || ""}
+            onChange={handleChange}
+            className="border p-2 rounded w-full"
+          />
+        ))}
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded mt-2">
           Save
         </button>
       </form>
