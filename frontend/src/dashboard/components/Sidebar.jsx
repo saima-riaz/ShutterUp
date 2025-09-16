@@ -10,16 +10,27 @@ const Sidebar = ({ onLogout, onUpload }) => {
   const [notifCount, setNotifCount] = useState(0);
 
   // Fetch notifications count
-  const loadNotifications = async () => {
-    try {
-      const res = await authFetch("/gallery/notifications", { method: "GET" });
-      if (!res.ok) throw new Error("Failed to fetch notifications");
+  // Change the API endpoint in both functions
+const loadNotifications = async () => {
+  try {
+    const res = await authFetch("/notifications");
+    if (res.ok) {
       const data = await res.json();
       setNotifCount(data.length);
-    } catch (err) {
-      console.error("Failed to load notifications:", err);
     }
-  };
+  } catch (err) {
+    console.error("Failed to load notifications:", err);
+  }
+};
+
+const clearNotifications = async () => {
+  try {
+    const res = await authFetch("/notifications", { method: "DELETE" });
+    if (res.ok) setNotifCount(0);
+  } catch (err) {
+    console.error("Failed to clear notifications:", err);
+  }
+};
 
   useEffect(() => {
     loadNotifications();
