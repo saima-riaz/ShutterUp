@@ -1,6 +1,6 @@
 const Gallery = require("../models/Gallery");
-const Notification = require("../models/Notification");
 const { v4: uuidv4 } = require("uuid");
+const Notification = require('../models/Notification');
 
 // helper: slugify title → url-friendly string
 const slugify = (text) =>
@@ -146,28 +146,30 @@ exports.getSharedGallery = async (req, res) => {
       return res.status(404).json({ message: "Shared gallery not found" });
     }
 
-    // Create a notification every time the shared gallery is accessed
-    await Notification.create({
-      user: gallery.user,          // gallery owner
-      message: `Your gallery "${gallery.title}" was viewed.`,
-      viewerEmail: req.query.email || null // optional
-    });
+    // ===== Notification logic =====
+    // Only notify once per viewer per gallery
+    // Assume viewerEmail is sent in query or body when they provide their email to view
+    const viewerEmail = req.query.email || req.body.email;
+    if (viewerEmail) {
+      const existing = await Notification.findOne({
+        user: gallery.user, // gallery owner
+        viewerEmail,
+        galleryId: gallery._id
+      });
+
+      if (!existing) {
+        await Notification.create({
+          user: gallery.user, // owner
+          viewerEmail,
+          galleryId: gallery._id
+        });
+      }
+    }
+    // ==============================
 
     res.status(200).json(gallery);
   } catch (error) {
     console.error("Get shared gallery error:", error.message);
     res.status(500).json({ message: "Server error" });
-  }
-};
-
-// =======================
-// Get notifications for logged-in user
-// =======================
-exports.getNotifications = async (req, res) => {
-  try {
-    const notifications = await Notification.find({ user: req.user.id }).sort({ createdAt: -1 });
-    res.json(notifications);
-  } catch {
-    res.status(500).json({ error: "Server error" });
   }
 };
