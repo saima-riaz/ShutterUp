@@ -7,12 +7,10 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Just set user on login
   const login = (userData) => {
     setUser(userData);
   };
 
-  // Logout clears user and calls backend to clear cookie
   const logout = async () => {
     try {
       await fetch(`${API_BASE}/api/auth/logout`, {
@@ -25,7 +23,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  // Refresh token flow: fetch user data, update state
+  // FIXED: Better error handling for refresh token
   const refreshAccessToken = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/auth/refresh-token`, {
@@ -33,26 +31,36 @@ export function AuthProvider({ children }) {
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Refresh token failed");
+      // Handle 401 (no refresh token) gracefully - this is normal for new users
+      if (res.status === 401) {
+        setUser(null);
+        return false;
+      }
+
+      if (!res.ok) {
+        throw new Error(`Refresh failed with status: ${res.status}`);
+      }
 
       const data = await res.json();
-      setUser(data.user);
-      return true;
-    } catch (err) {
-      console.error("Refresh token failed:", err.message);
-      setUser(null);
-      return false;
+    setUser(data.user);
+    return true;
+  } catch (err) {
+    // Only log actual errors, not the normal 401 case
+    if (!err.message.includes("401")) {
+      console.log("Refresh token failed:", err.message);
     }
-  };
+    setUser(null);
+    return false;
+  }
+};
 
   useEffect(() => {
     (async () => {
-      await refreshAccessToken(); // try to refresh on page load
+      await refreshAccessToken();
       setLoading(false);
     })();
   }, []);
   
-  // fetch wrapper: sends cookies, no auth header needed, adds /api prefix if missing
   const authFetch = (url, options = {}) => {
     const apiUrl = url.startsWith("/api") ? url : `/api${url}`;
     const finalOptions = {
@@ -63,7 +71,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, authFetch, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, authFetch, loading, refreshAccessToken }}>
       {children}
     </AuthContext.Provider>
   );
