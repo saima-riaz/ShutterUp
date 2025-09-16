@@ -13,6 +13,8 @@ import ResetPassword from './pages/ResetPassword';
 import Notifications from "./notification/Notifications.jsx";
 import SharedGalleryPrompt from "./notification/SharedGalleryPrompt";
 import SharedGalleryView from "./notification/SharedGalleryView";
+import Profile from "./profile/Profile";
+
 
 function App() {
   return (
@@ -29,7 +31,6 @@ function App() {
           {/* Shared gallery email flow */}
           <Route path="/shared/:token" element={<SharedGalleryPrompt />} />
           <Route path="/shared/:token/view" element={<SharedGalleryView />} />
-
           <Route path="/notifications" element={<Notifications />} />
 
           {/* ===================== PROTECTED ROUTES ===================== */}
@@ -38,6 +39,8 @@ function App() {
             <Route path="/upload" element={<Upload />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/gallery/:url" element={<GalleryDetail />} />
+            <Route path="/profile" element={<Profile />} />
+
           </Route>
         </Routes>
       </Router>
