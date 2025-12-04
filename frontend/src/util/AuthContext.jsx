@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Notifications unread counter (shared globally)
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const login = (userData) => {
     setUser(userData);
@@ -17,13 +22,10 @@ export function AuthProvider({ children }) {
         method: "POST",
         credentials: "include",
       });
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
+    } catch (_) {}
     setUser(null);
   };
 
-  // FIXED: Better error handling for refresh token
   const refreshAccessToken = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/auth/refresh-token`, {
@@ -31,36 +33,44 @@ export function AuthProvider({ children }) {
         credentials: "include",
       });
 
-      // Handle 401 (no refresh token) gracefully - this is normal for new users
       if (res.status === 401) {
         setUser(null);
         return false;
       }
 
       if (!res.ok) {
-        throw new Error(`Refresh failed with status: ${res.status}`);
+        throw new Error(res.status);
       }
 
       const data = await res.json();
-    setUser(data.user);
-    return true;
-  } catch (err) {
-    // Only log actual errors, not the normal 401 case
-    if (!err.message.includes("401")) {
-      console.log("Refresh token failed:", err.message);
+      setUser(data.user);
+      return true;
+    } catch (_) {
+      setUser(null);
+      return false;
     }
-    setUser(null);
-    return false;
-  }
-};
+  };
+
+  // Shared function to load notifications and update unread count
+  const loadNotifications = async () => {
+    try {
+      const res = await authFetch("/notifications");
+      if (!res.ok) return;
+
+      const data = await res.json();
+      const count = data.filter(n => !n.read).length;
+      setUnreadCount(count);
+    } catch (_) {}
+  };
 
   useEffect(() => {
     (async () => {
       await refreshAccessToken();
       setLoading(false);
+      await loadNotifications(); // Load unread count on app start
     })();
   }, []);
-  
+
   const authFetch = (url, options = {}) => {
     const apiUrl = url.startsWith("/api") ? url : `/api${url}`;
     const finalOptions = {
@@ -71,7 +81,19 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, authFetch, loading, refreshAccessToken }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        authFetch,
+        loading,
+        refreshAccessToken,
+        unreadCount,
+        setUnreadCount,
+        loadNotifications
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
