@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../util/AuthContext";
 
 export default function Notifications() {
-  const { authFetch } = useAuth();
+  const { authFetch, setUnreadCount } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -12,8 +12,9 @@ export default function Notifications() {
       if (!res.ok) throw new Error("Failed to load notifications");
       const data = await res.json();
       setNotifications(data);
-    } catch (err) {
-      console.error("Error loading notifications:", err);
+      setUnreadCount(data.filter(n => !n.read).length);
+    } catch (_) {
+      // Handle error silently
     } finally {
       setLoading(false);
     }
@@ -21,14 +22,20 @@ export default function Notifications() {
 
   const clearAll = async () => {
     try {
-      const res = await authFetch("/notifications", {
-        method: "DELETE"
-      });
+      const res = await authFetch("/notifications", { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to clear notifications");
       setNotifications([]);
-    } catch (err) {
-      console.error("Error clearing notifications:", err);
-    }
+      setUnreadCount(0);
+    } catch (_) {}
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      const res = await authFetch("/notifications/mark-read", { method: "PATCH" });
+      if (!res.ok) throw new Error("Failed to mark notifications as read");
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (_) {}
   };
 
   useEffect(() => {
@@ -41,24 +48,43 @@ export default function Notifications() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Notifications</h2>
           {notifications.length > 0 && (
-            <button
-              onClick={clearAll}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-            >
-              Clear All
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={markAllAsRead}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+              >
+                Mark as Read
+              </button>
+              <button
+                onClick={clearAll}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+              >
+                Clear All
+              </button>
+            </div>
           )}
         </div>
+
         {loading ? (
           <p className="text-gray-500">Loading notifications...</p>
         ) : notifications.length === 0 ? (
           <p className="text-gray-500">You have no notifications</p>
         ) : (
           <ul className="divide-y divide-gray-200">
-            {notifications.map((n) => (
-              <li key={n._id} className="py-4 flex flex-col">
-                <p className="text-gray-800">
-                  {n.viewerEmail} viewed your gallery
+            {notifications.map(n => (
+              <li
+                key={n._id}
+                className={`py-4 flex flex-col ${
+                  n.read ? "bg-gray-100 text-gray-400" : "bg-white text-gray-800"
+                } rounded-md px-2`}
+              >
+                <p className="flex justify-between items-center">
+                  <span>{n.viewerEmail} viewed your gallery</span>
+                  {n.read && (
+                    <span className="text-xs font-semibold bg-gray-300 text-gray-700 px-2 py-1 rounded-full">
+                      Read
+                    </span>
+                  )}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
                   {new Date(n.createdAt).toLocaleString()}
