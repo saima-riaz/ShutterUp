@@ -1,40 +1,62 @@
 import { useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import PhotoGrid from "../dashboard/components/PhotoGrid";
 import PhotoModal from "../dashboard/components/PhotoModal";
-
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+import { useAuth } from "../util/AuthContext";
 
 const SharedGalleryView = () => {
   const { token } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const { authFetch, loadNotifications } = useAuth(); // useAuth for API requests
+
   const [gallery, setGallery] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+
   const email = new URLSearchParams(location.search).get("email");
 
   useEffect(() => {
     if (!email) {
-      setError("Email is required to view this gallery.");
+      setError("Email required to view gallery.");
       setLoading(false);
       return;
     }
 
-    axios
-      .get(`${API_BASE}/api/gallery/public/${token}`, { params: { email } })
-      .then((res) => {
-        const data = res.data;
+    const fetchGallery = async () => {
+      try {
+        // Fetch gallery data
+        const res = await authFetch(`/gallery/public/${token}?email=${email}`);
+        if (!res.ok) throw new Error("Failed to load gallery");
+
+        const data = await res.json();
         if (!data.photos) data.photos = [];
         data.photos = data.photos
           .map((photo) => ({ ...photo, url: photo.imageUrl || null }))
           .filter((photo) => photo.url);
         setGallery(data);
-      })
-      .catch((err) => setError(err.response?.data?.message || "Failed to load gallery."))
-      .finally(() => setLoading(false));
+
+        // Send notification to gallery owner
+        await authFetch("/notifications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            viewerEmail: email,
+            galleryId: data._id,
+          }),
+        });
+
+        // Update unread count in sidebar
+        loadNotifications();
+      } catch (err) {
+        setError(err.message || "Failed to load gallery.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGallery();
   }, [token, email]);
 
   if (loading) return <p className="p-6 text-center">Loading gallery...</p>;
@@ -46,9 +68,12 @@ const SharedGalleryView = () => {
       <button onClick={() => navigate(-1)} className="mb-4 text-blue-600 hover:underline">
         ← Back
       </button>
+
       <h1 className="text-3xl font-bold mb-2">{gallery.title}</h1>
       <p className="text-gray-700 mb-6">{gallery.description}</p>
+
       <PhotoGrid photos={gallery.photos} onPhotoClick={setSelectedPhoto} shared={true} />
+
       {selectedPhoto && (
         <PhotoModal
           photos={gallery.photos}
