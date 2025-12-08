@@ -1,20 +1,53 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faChevronLeft, faChevronRight, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
+import { useAuth } from "../../util/AuthContext";
 
-const PhotoModal = ({ photo, onClose, photos = [], currentIndex = 0, shared = false }) => {
+const PhotoModal = ({
+  photo,
+  onClose,
+  photos = [],
+  currentIndex = 0,
+  shared = false,
+  viewerEmail,
+  galleryId,
+
+}) => {
+  const { authFetch, loadNotifications } = useAuth();
   const [index, setIndex] = useState(currentIndex);
+  const [liked, setLiked] = useState(false);
+
+  const currentPhoto = photos[index];
 
   useEffect(() => {
     setIndex(currentIndex);
-  }, [currentIndex]);
-
-  if (!photos.length) return null;
+    setLiked(false); // reset like state on photo switch
+  }, [currentIndex, photo]);
 
   const handleNext = () => setIndex((prev) => (prev + 1) % photos.length);
   const handlePrev = () => setIndex((prev) => (prev - 1 + photos.length) % photos.length);
 
-  const currentPhoto = photos[index];
+  const handleLike = async () => {
+    if (liked) return; // prevent multiple likes
+    try {
+      await authFetch("/notifications/like", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          viewerEmail,
+          galleryId,
+    
+          
+        }),
+      });
+      setLiked(true);
+      loadNotifications(); // update sidebar badge
+    } catch (err) {
+      console.error("Failed to like photo:", err);
+    }
+  };
+
+  if (!photos.length) return null;
 
   return (
     <div
@@ -57,20 +90,25 @@ const PhotoModal = ({ photo, onClose, photos = [], currentIndex = 0, shared = fa
         />
 
         {/* Caption */}
-        <div className="absolute bottom-0 w-full bg-opacity-50 text-center">
+        <div className="absolute bottom-0 w-full bg-black bg-opacity-20 p-1 text-center">
           {currentPhoto.caption && (
             <p className="text-white text-sm truncate">{currentPhoto.caption}</p>
           )}
-          <p className="text-xs text-black-100 mt-1">
+          <p className="text-white text-sm mt-1">
             Uploaded on {new Date(currentPhoto.createdAt).toLocaleDateString()}
           </p>
         </div>
 
-        {/* Remove photo button (only if not shared) */}
-        {!shared && (
-          <div className="absolute top-2 left-2">
-            {/* You can place a remove/delete button here if needed */}
-          </div>
+        {/* Like Button for shared galleries */}
+        {shared && (
+          <button
+            onClick={handleLike}
+            className={`absolute top-3 left-2 p-2 rounded-full transition ${
+              liked ? "text-red-500" : "text-white"
+            }`}
+          >
+            <FontAwesomeIcon icon={faHeart} size="2x" />
+          </button>
         )}
       </div>
     </div>
