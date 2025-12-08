@@ -8,7 +8,7 @@ const SharedGalleryView = () => {
   const { token } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { authFetch, loadNotifications } = useAuth(); // useAuth for API requests
+  const { authFetch, loadNotifications } = useAuth();
 
   const [gallery, setGallery] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,6 @@ const SharedGalleryView = () => {
 
     const fetchGallery = async () => {
       try {
-        // Fetch gallery data
         const res = await authFetch(`/gallery/public/${token}?email=${email}`);
         if (!res.ok) throw new Error("Failed to load gallery");
 
@@ -35,9 +34,10 @@ const SharedGalleryView = () => {
         data.photos = data.photos
           .map((photo) => ({ ...photo, url: photo.imageUrl || null }))
           .filter((photo) => photo.url);
+
         setGallery(data);
 
-        // Send notification to gallery owner
+        // Notify gallery owner of view
         await authFetch("/notifications", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -47,8 +47,7 @@ const SharedGalleryView = () => {
           }),
         });
 
-        // Update unread count in sidebar
-        loadNotifications();
+        loadNotifications(); // update sidebar badge
       } catch (err) {
         setError(err.message || "Failed to load gallery.");
       } finally {
@@ -81,6 +80,8 @@ const SharedGalleryView = () => {
           photo={selectedPhoto}
           onClose={() => setSelectedPhoto(null)}
           shared={true}
+          viewerEmail={email} // pass the visitor email
+          galleryId={gallery._id} // pass gallery ID
         />
       )}
     </div>

@@ -38,6 +38,8 @@ export default function Notifications() {
     } catch (_) {}
   };
 
+  
+
   useEffect(() => {
     loadNotifications();
   }, []);
@@ -79,16 +81,18 @@ export default function Notifications() {
                 } rounded-md px-2`}
               >
                 <p className="flex justify-between items-center">
-                  <span>{n.viewerEmail} viewed your gallery</span>
-                  {n.read && (
-                    <span className="text-xs font-semibold bg-gray-300 text-gray-700 px-2 py-1 rounded-full">
-                      Read
-                    </span>
-                  )}
+                  <span>{n.message}</span>
+
+                    {n.read && (
+                  <span className="text-xs font-semibold bg-gray-300 text-gray-700 px-2 py-1 rounded-full">
+                    Read
+                  </span>
+                )}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
                   {new Date(n.createdAt).toLocaleString()}
                 </p>
+                
               </li>
             ))}
           </ul>
