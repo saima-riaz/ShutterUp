@@ -10,8 +10,8 @@ module.exports = {
     extend: {
       // Extend the default theme with custom values
       
-      fontFamily: {
-        sans: ['Satisfy', 'cursive', 'sans-serif'],
+       fontFamily: {  // Add custom fonts to the theme
+        sans: ['Satisfy", cursive', 'sans-serif'],
         lavish: ['"Lavishly Yours"', 'cursive'],
       },
       
@@ -26,4 +26,5 @@ module.exports = {
     },
   },
   plugins: [], // No plugins are included in this setup
+
 }
