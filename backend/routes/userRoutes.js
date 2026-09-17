@@ -16,6 +16,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 // ======================
 // Protected route: user must be logged in
 // :Users cannot update their profile
+router.get("/profile", authMiddleware, userController.getProfile);
 router.put("/profile", authMiddleware, userController.updateProfile);
 
 // Export router to use in main app
