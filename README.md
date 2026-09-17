@@ -71,6 +71,7 @@ ShutterUp is a MERN-stack application built to solve a real product problem: let
 
 ## 📁 Project Structure
 
+\`\`\`
 ShutterUp/
 ├── backend/
 │ ├── config/
@@ -113,6 +114,7 @@ ShutterUp/
 ├── tailwind.config.js
 ├── vite.config.js
 └── package.json
+\`\`\`
 
 ## 🔑 Environment Variables
 
