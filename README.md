@@ -1,6 +1,6 @@
 # 📸 ShutterUp
 
-A full-stack photo sharing platform where users can upload photos, organize them into galleries, and share them publicly via secure links — with real-time-style notifications when someone views, likes, or comments.
+A full-stack photo sharing platform where users can upload photos, organize them into galleries, and share them publicly via secure links with real-time-style notifications when someone views, likes, or comments.
 
 Built to demonstrate end-to-end full-stack development: secure authentication, cloud media handling, RESTful API design, and a responsive React frontend.
 
@@ -30,7 +30,7 @@ Built to demonstrate end-to-end full-stack development: secure authentication, c
 
 ## ✨ Overview
 
-ShutterUp is a MERN-stack application built to solve a real product problem: letting someone upload photos, curate them into galleries, and share a single gallery link publicly — without forcing viewers to create an account — while still notifying the owner of engagement (views, likes, comments) on that gallery.
+ShutterUp is a MERN-stack application built to solve a real product problem: letting someone upload photos, curate them into galleries, and share a single gallery link publicly, without forcing viewers to create an account, while still notifying the owner of engagement (views, likes, comments) on that gallery.
 
 ## 🚀 Features
 
@@ -69,52 +69,112 @@ ShutterUp is a MERN-stack application built to solve a real product problem: let
 | Tailwind CSS | Styling |
 | Font Awesome | Icons |
 
+Architecture
+                         ShutterUp
+                             |
+              ┌──────────────┴──────────────┐
+              |                             |
+          Frontend                       Backend
+       React + Vite                 Node.js + Express
+              |                             |
+              |          REST API            |
+              └──────────────►──────────────┘
+                                            |
+                         ┌──────────────────┼──────────────────┐
+                         |                  |                  |
+                    MongoDB Atlas       Cloudinary         Nodemailer
+                     Database          Image Storage          Email
+
+
 ## 📁 Project Structure
 
-\`\`\`
-ShutterUp/
-├── backend/
-│ ├── config/
-│ │ └── cloudinary.js
-│ ├── controllers/
-│ │ ├── authController.js
-│ │ ├── galleryController.js
-│ │ ├── notificationController.js
-│ │ ├── postController.js
-│ │ └── userController.js
-│ ├── middleware/
-│ │ └── authMiddleware.js
-│ ├── models/
-│ │ ├── Gallery.js
-│ │ ├── Notification.js
-│ │ ├── Post.js
-│ │ └── User.js
-│ ├── routes/
-│ │ ├── authRoutes.js
-│ │ ├── galleryRoutes.js
-│ │ ├── notificationsRoutes.js
-│ │ ├── postRoutes.js
-│ │ └── userRoutes.js
-│ ├── utils/
-│ │ ├── notification.js
-│ │ └── upload.js
-│ ├── app.js
-│ └── package.json
-└── frontend/
+### Backend
+
+```text
+backend/
+├── config/
+│   └── cloudinary.js
+│
+├── controllers/
+│   ├── authController.js
+│   ├── galleryController.js
+│   ├── notificationController.js
+│   ├── postController.js
+│   └── userController.js
+│
+├── middleware/
+│   └── authMiddleware.js
+│
+├── models/
+│   ├── Gallery.js
+│   ├── Notification.js
+│   ├── Post.js
+│   └── User.js
+│
+├── routes/
+│   ├── authRoutes.js
+│   ├── galleryRoutes.js
+│   ├── notificationsRoutes.js
+│   ├── postRoutes.js
+│   └── userRoutes.js
+│
+├── utils/
+│   ├── notification.js
+│   └── upload.js
+│
+├── app.js
+└── package.json
+```
+
+### Frontend
+
+```text
+frontend/
 ├── src/
-│ ├── components/ # Navbar
-│ ├── dashboard/ # Dashboard, Upload, PhotoGrid, PhotoModal, Sidebar
-│ ├── gallery/ # Gallery, GalleryDetail, GalleryCard, ImageCard
-│ ├── notification/ # Notifications, SharedGalleryPrompt, SharedGalleryView
-│ ├── pages/ # Home, Login, Signup, ResetPassword
-│ ├── profile/ # Profile
-│ ├── util/ # AuthContext, ProtectedRoute, photoAPI, profileAPI
-│ ├── App.jsx
-│ └── main.jsx
+│   ├── components/
+│   │   └── Navbar
+│   │
+│   ├── dashboard/
+│   │   ├── Dashboard
+│   │   ├── Upload
+│   │   ├── PhotoGrid
+│   │   ├── PhotoModal
+│   │   └── Sidebar
+│   │
+│   ├── gallery/
+│   │   ├── Gallery
+│   │   ├── GalleryDetail
+│   │   ├── GalleryCard
+│   │   └── ImageCard
+│   │
+│   ├── notification/
+│   │   ├── Notifications
+│   │   ├── SharedGalleryPrompt
+│   │   └── SharedGalleryView
+│   │
+│   ├── pages/
+│   │   ├── Home
+│   │   ├── Login
+│   │   ├── Signup
+│   │   └── ResetPassword
+│   │
+│   ├── profile/
+│   │   └── Profile
+│   │
+│   ├── util/
+│   │   ├── AuthContext
+│   │   ├── ProtectedRoute
+│   │   ├── photoAPI
+│   │   └── profileAPI
+│   │
+│   ├── App.jsx
+│   └── main.jsx
+│
 ├── tailwind.config.js
 ├── vite.config.js
 └── package.json
-\`\`\`
+```
+
 
 ## 🔑 Environment Variables
 
@@ -139,7 +199,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ## ▶️ Getting Started
 
-**Prerequisites:** Node.js, a MongoDB instance (local or Atlas), and a free [Cloudinary](https://cloudinary.com) account.
+**Prerequisites:** Node.js, a MongoDB instance (Atlas), and a free [Cloudinary](https://cloudinary.com) account.
 
 **1. Clone the repo**
 ```bash
