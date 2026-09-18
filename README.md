@@ -69,22 +69,6 @@ ShutterUp is a MERN-stack application built to solve a real product problem: let
 | Tailwind CSS | Styling |
 | Font Awesome | Icons |
 
-Architecture
-                         ShutterUp
-                             |
-              ┌──────────────┴──────────────┐
-              |                             |
-          Frontend                       Backend
-       React + Vite                 Node.js + Express
-              |                             |
-              |          REST API            |
-              └──────────────►──────────────┘
-                                            |
-                         ┌──────────────────┼──────────────────┐
-                         |                  |                  |
-                    MongoDB Atlas       Cloudinary         Nodemailer
-                     Database          Image Storage          Email
-
 
 ## 📁 Project Structure
 
